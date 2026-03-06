@@ -80,7 +80,7 @@ set.seed(-77)
 ```{r}
 
 # paths may vary
-api_keys <- read_csv("D:/repos/api-keys.csv", show_col_types = FALSE)
+#api_keys <- read_csv("D:/repos/api-keys.csv", show_col_types = FALSE)
 
 ```
 
@@ -89,8 +89,8 @@ api_keys <- read_csv("D:/repos/api-keys.csv", show_col_types = FALSE)
 ```{r}
 
 # change as needed path to the github repository
-kevin_input_path <- "D:/repos/eight-mile-sample/inputs/"
-# tavril_input_path <- 
+#kevin_input_path <- "D:/repos/eight-mile-sample/inputs/"
+tavril_input_path <- "C:/Users/tavri/Documents/SURV745/eight-mile-sample/inputs/"
 
 census_tract <- "Census_Tract_FIPS_Code_Detroit_MI.csv"
 detroit_mi <- "Detroit_MI.xlsx"
@@ -98,7 +98,7 @@ detroit_mi <- "Detroit_MI.xlsx"
 
 # read in census tracks
 tract_fips <- read_csv(
-  str_c(kevin_input_path, # change this as needed
+  str_c(tavril_input_path, # change this as needed
         census_tract), col_names = "GEOID",
   col_types = cols(GEOID = col_character()),
   skip = 1
@@ -106,13 +106,13 @@ tract_fips <- read_csv(
 
 # read in detroit tracks
 tract <- read_excel(
-  str_c(kevin_input_path,
+  str_c(tavril_input_path,
         detroit_mi), sheet = "Tract") |>
   mutate(Tract = as.character(Tract)) |>
   semi_join(tract_fips, by = c("Tract" = "GEOID"))
 
 bg <- read_excel(
-   str_c(kevin_input_path,
+   str_c(tavril_input_path,
         detroit_mi), sheet = "BlockGroup") |>
   mutate(
     BlockGroup = as.character(BlockGroup),
