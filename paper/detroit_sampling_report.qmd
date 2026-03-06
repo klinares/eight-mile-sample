@@ -1,0 +1,261 @@
+---
+title: "Detroit Transportation Survey: Multi-Stage Area Probability Sample Design"
+subtitle: "A Technical Sampling Report"
+author:
+  - name: "Group Name"
+    affiliations:
+      - name: "University of Michigan"
+date: today
+format:
+  jasa-pdf:
+    keep-tex: true
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    cite-method: natbib
+  pdf:
+    documentclass: article
+    geometry:
+      - margin=1in
+    fontsize: 11pt
+    linestretch: 1.0
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    keep-tex: true
+    include-in-header:
+      text: |
+        \usepackage{booktabs}
+        \usepackage{longtable}
+        \usepackage{float}
+        \usepackage{amsmath}
+        \floatplacement{table}{H}
+        \floatplacement{figure}{H}
+bibliography: references.bib
+execute:
+  echo: true
+  warning: false
+  message: false
+  cache: true
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+### These are the packages we will be using. The [tidycensus](https://walker-data.com/tidycensus/) is the only package that requires an api key 
+
+```{r}
+#| label: setup
+#| echo: false
+#| message: false
+#| warning: false
+
+# ──────────────────────────────────────────────────────
+# Load Required Packages
+# ──────────────────────────────────────────────────────
+library(tidyverse)      # Data wrangling and visualization
+library(readxl)         # Read Excel files
+library(sampling)       # Survey sample selection (UPsystematic, etc.)
+library(survey)         # Survey analysis
+library(srvyr)          # Tidyverse-friendly survey analysis
+library(PracTools)      # Practical tools for survey design
+library(sf)             # Spatial data handling
+library(tigris)         # Census TIGER shapefiles
+library(tidycensus)     # Census data API
+library(viridis)        # Color-blind friendly palettes
+library(patchwork)      # Combine ggplots
+library(knitr)          # Table formatting
+library(kableExtra)     # Enhanced tables
+library(scales)         # Number formatting
+
+
+# tigris Options
+options(tigris_class = "sf")
+options(tigris_use_cache = TRUE)
+
+# set random seed
+set.seed(-77)
+```
+
+#### Once you request your api key, you will need to save it locally and not share it in any of the scripts that will go on github. We may also use the stadia package for plots
+
+```{r}
+
+# paths may vary
+api_keys <- read_csv("D:/repos/api-keys.csv", show_col_types = FALSE)
+
+```
+
+### The data for this project can be read in through through github
+
+```{r}
+
+# change as needed path to the github repository
+kevin_input_path <- "D:/repos/eight-mile-sample/inputs/"
+# tavril_input_path <- 
+
+census_tract <- "Census_Tract_FIPS_Code_Detroit_MI.csv"
+detroit_mi <- "Detroit_MI.xlsx"
+
+
+# read in census tracks
+tract_fips <- read_csv(
+  str_c(kevin_input_path, # change this as needed
+        census_tract), col_names = "GEOID",
+  col_types = cols(GEOID = col_character()),
+  skip = 1
+)
+
+# read in detroit tracks
+tract <- read_excel(
+  str_c(kevin_input_path,
+        detroit_mi), sheet = "Tract") |>
+  mutate(Tract = as.character(Tract)) |>
+  semi_join(tract_fips, by = c("Tract" = "GEOID"))
+
+bg <- read_excel(
+   str_c(kevin_input_path,
+        detroit_mi), sheet = "BlockGroup") |>
+  mutate(
+    BlockGroup = as.character(BlockGroup),
+    Tract = substr(BlockGroup, 1, 11)
+  ) |>
+  semi_join(tract_fips, by = c("Tract" = "GEOID"))
+
+cat("Detroit tracts:", nrow(tract), "\n")
+cat("Detroit block groups:", nrow(bg), "\n")
+```
+
+\newpage
+
+# Introduction {#sec-intro}
+
+This report will capture the the design of a multi-stage area
+probability sample for a face-to-face survey of Detroit, Michigan
+residents. The survey examines transportation security and
+transportation use, with key outcome variables including
+
+-   the proportion of residents in households without a vehicle
+
+-   the proportion whose main transportation is public transit, the
+    proportion who skip destinations due to transportation problems
+
+-   the proportion who sought transportation help from friends, family,
+    or neighbors.
+
+The sample uses a three-stage design:
+
+1.  Stage 1: Census tracts as primary sampling units (PSUs),
+2.  Stage 2: Block groups (BGs) as secondary sampling units (SSUs), and
+3.  Stage 2: Persons as elements.
+
+### Design Goals
+
+The design goals are to yield 1,000 total respondents (see table below)
+while achieving a self-weighting sample within each age group and equal
+interviewer workload in each sample PSU. These dual objectives are
+accomplished through the composite measure of size (MOS) technique
+described in VDK.
+
+### Deliverable Requiremetns
+
+The report will be structured for a dual audience: managers seeking a
+high-level understanding of the sample design and its rationale, and
+survey statisticians requiring the mathematical details, selection
+probabilities, and variance estimation guidance.
+
+# Sample Design {#sec-design}
+
+## Design Goals
+
+The sample must satisfy four requirements simultaneously:
+
+1.  **Total sample size**: 1,000 respondents split equally (250 per
+    group) across four age domains.
+2.  **Self-weighting within domains**: Every person in a given age group
+    has the same overall selection probability, i.e., $\pi_k(d) = f_d$
+    for domain $d$.
+3.  **Equal workload per PSU**: The total expected number of selected
+    persons is the same across all 40 sample tracts.
+4.  **Multi-stage selection**: 40 tracts (PSUs), 1 BG per tract (SSU),
+    and persons selected within BGs at domain-specific rates.
+
+## Target Population
+
+The target population consists of all non-institutionalized persons aged
+18 and older residing in the City of Detroit, Michigan. According to the
+2020 Decennial Census Demographic and Housing Characteristics (DHC)
+Summary File, Detroit contains approximately 480,131 adults (18+) across
+270 eligible census tracts.
+
+## Area Sampling Frame {#sec-frame}
+
+### Data Sources
+
+The sampling frame is constructed from two files:
+
+-   **Census Tract FIPS Code Detroit MI.csv**: A list of 280 FIPS codes
+    identifying Census tracts within the City of Detroit, obtained from
+    the City of Detroit Open Data Portal.
+
+-   **Detroit MI.xlsx**: Census tract- and block group-level aggregate
+    data from the 2020 Decennial Census DHC Summary File, downloaded via
+    the `tidycensus` R package for Wayne County, MI and merged with the
+    Detroit tract FIPS codes. Includes housing unit counts (`H1_001N`),
+    total person counts, and detailed person counts by Sex $\times$ Age
+    (`P12` table).
+
+### Data cleaning (still in development)
+
+```{r}
+# Pivot tract data long on all sex x age columns
+tract_long <- tract |>
+  pivot_longer(
+    cols = MaleLT5Yrs:FemaleGE85Yrs,
+    names_to = "SexAge",
+    values_to = "n"
+  ) |>
+  mutate(
+    AgeGroup = case_when(
+      str_detect(SexAge, "18to19|20Yrs|21Yrs|22to24|25to29|30to34") ~ "18-34",
+      str_detect(SexAge, "35to39|40to44|45to49")                    ~ "35-49",
+      str_detect(SexAge, "50to54|55to59|60to61|62to64")             ~ "50-64",
+      str_detect(SexAge, "65to66|67to69|70to74|75to79|80to84|GE85") ~ "65+",
+      .default = NA_character_
+    )
+  )
+
+# PSU-level (tract) counts by age group
+psu_counts <- tract_long |>
+  filter(!is.na(AgeGroup)) |>
+  summarise(
+    n = sum(n),
+    .by = c(Tract, AgeGroup)
+  ) |>
+  mutate(AgeGroup = factor(AgeGroup, levels = c("18-34", "35-49", "50-64", "65+")))
+
+# SSU-level (block group) counts by age group — same pivot applied to bg
+bg_long <- bg |>
+  pivot_longer(
+    cols = MaleLT5Yrs:FemaleGE85Yrs,
+    names_to = "SexAge",
+    values_to = "n"
+  ) |>
+  mutate(
+    AgeGroup = case_when(
+      str_detect(SexAge, "18to19|20Yrs|21Yrs|22to24|25to29|30to34") ~ "18-34",
+      str_detect(SexAge, "35to39|40to44|45to49")                    ~ "35-49",
+      str_detect(SexAge, "50to54|55to59|60to61|62to64")             ~ "50-64",
+      str_detect(SexAge, "65to66|67to69|70to74|75to79|80to84|GE85") ~ "65+",
+      .default = NA_character_
+    )
+  )
+
+ssu_counts <- bg_long |>
+  filter(!is.na(AgeGroup)) |>
+  summarise(
+    n = sum(n),
+    .by = c(Tract, BlockGroup, AgeGroup)
+  ) |>
+  mutate(AgeGroup = factor(AgeGroup, levels = c("18-34", "35-49", "50-64", "65+")))
+```
