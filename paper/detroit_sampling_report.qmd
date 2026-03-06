@@ -9,8 +9,6 @@ date: today
 format:
   jasa-pdf:
     keep-tex: true
-    toc: true
-    toc-depth: 3
     number-sections: true
     cite-method: natbib
   pdf:
@@ -42,7 +40,7 @@ editor:
     wrap: 72
 ---
 
-### These are the packages we will be using. The [tidycensus](https://walker-data.com/tidycensus/) is the only package that requires an api key 
+### These are the packages we will be using. The [tidycensus](https://walker-data.com/tidycensus/) is the only package that requires an api key
 
 ```{r}
 #| label: setup
