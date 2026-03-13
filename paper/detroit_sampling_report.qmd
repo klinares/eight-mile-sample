@@ -68,10 +68,10 @@ set.seed(-77)
 ```{r}
 
 # data should now be read in automatically. 
-#input_path <- "inputs/"
+input_path <- "C:/Users/tavri/Documents/SURV745/eight-mile-sample/inputs/"
 
-#census_tract <- "Census_Tract_FIPS_Code_Detroit_MI.csv"
-#detroit_mi <- "Detroit_MI.xlsx"
+census_tract <- "Census_Tract_FIPS_Code_Detroit_MI.csv"
+detroit_mi <- "Detroit_MI.xlsx"
 
 
 # read in census tracks
