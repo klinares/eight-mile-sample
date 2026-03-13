@@ -2,7 +2,7 @@
 
 **Team:** Effect Size | **Course:** SURV745 — Practical Tools for Survey Design
 **Assigned:** 2/23/2026 | **Due:** 4/20/2026
-
+![](images/clipboard-3499325007.png)
 ---
 
 ## Project Overview
