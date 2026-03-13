@@ -44,6 +44,7 @@ library(patchwork)      # Combine ggplots
 library(knitr)          # Table formatting
 library(kableExtra)     # Enhanced tables
 library(scales)         # Number formatting
+library(here)           # file manager
 
 
 # tigris Options
@@ -63,44 +64,50 @@ set.seed(-77)
 
 ```
 
-### The data for this project can be read in through through github
+
 
 ```{r}
+#| include: false
 
-# data should now be read in automatically. 
-input_path <- "C:/Users/tavri/Documents/SURV745/eight-mile-sample/inputs/"
+### Quarto is independant from rstudio live session meaning that when it renders, it is not using the data objects that are loaded in locally, but rather it is trying to find them. We will need this code to read in the data.
 
+
+# Anchor to project root regardless of where the .qmd lives
+here::i_am("inputs/Detroit_MI.xlsx")
+
+input_path   <- here("inputs")
 census_tract <- "Census_Tract_FIPS_Code_Detroit_MI.csv"
-detroit_mi <- "Detroit_MI.xlsx"
+detroit_mi   <- "Detroit_MI.xlsx"
 
-
-# read in census tracks
 tract_fips <- read_csv(
-  str_c(input_path, # change this as needed
-        census_tract), col_names = "GEOID",
+  file.path(input_path, census_tract),
+  col_names = "GEOID",
   col_types = cols(GEOID = col_character()),
-  skip = 1
+  skip = 1,
+  show_col_types = FALSE
 )
 
-# read in detroit tracks
 tract <- read_excel(
-  str_c(input_path,
-        detroit_mi), sheet = "Tract") |>
+  file.path(input_path, detroit_mi),
+  sheet = "Tract"
+) |>
   mutate(Tract = as.character(Tract)) |>
-  semi_join(tract_fips, by = c("Tract" = "GEOID"))
+  semi_join(tract_fips, by = c("Tract" = "GEOID")) |>
+  mutate(TotPerson = rowSums(across(starts_with("Age"))))
 
 bg <- read_excel(
-   str_c(input_path,
-        detroit_mi), sheet = "BlockGroup") |>
+  file.path(input_path, detroit_mi),
+  sheet = "BlockGroup"
+) |>
   mutate(
     BlockGroup = as.character(BlockGroup),
     Tract = substr(BlockGroup, 1, 11)
   ) |>
   semi_join(tract_fips, by = c("Tract" = "GEOID"))
-
-cat("Detroit tracts:", nrow(tract), "\n")
-cat("Detroit block groups:", nrow(bg), "\n")
 ```
+
+
+
 
 \newpage
 
@@ -162,7 +169,13 @@ tract |>
   filter(Tract == "26163985500") |> 
   select(1:10) |> 
   head() |> 
-  kable()
+  kable(
+    booktabs = TRUE,
+    format = "latex"
+  ) |>
+  kable_styling(
+    latex_options = c("striped", "scale_down", "hold_position")
+  )
 
 # drop this tract
 tract <- tract |> 
@@ -170,6 +183,8 @@ tract <- tract |>
 
 tract |> nrow() |> kable()
 ```
+
+
 
 -   We can now restructure the datasets by PSU and SSU.
 
@@ -191,6 +206,8 @@ psu_frame <- tract |>
     names_to = "SexAge",
     values_to = "elements"
   ) |>
+  # drop TotPerson, we compute this later
+  select(-TotPerson) |> 
   mutate(
     # using age_pattern, create recode age
     AgeGroup = map_chr(SexAge, \(x) {
@@ -200,8 +217,13 @@ psu_frame <- tract |>
 ) |>
   filter(!is.na(AgeGroup)) |>
   # collapse elements to columns
-  summarise(n = sum(elements), .by = c(Tract, TotHH, TotPerson, AgeGroup)) |>
-  pivot_wider(names_from = AgeGroup, values_from = n)
+  summarise(n = sum(elements), .by = c(Tract, TotHH, AgeGroup)) |>
+  pivot_wider(names_from = AgeGroup, values_from = n) |> 
+  # compute TotPerson
+  mutate(
+    TotPerson = rowSums(across(starts_with("Age")))) |> 
+  # move TotPerson
+  relocate(TotPerson, .after = "TotHH")
 
 # SSU Frame (block group-level)
 ssu_frame <- bg |>
@@ -210,6 +232,8 @@ ssu_frame <- bg |>
     names_to = "SexAge",
     values_to = "elements"
   ) |>
+   # drop TotPerson, we compute this later
+  select(-TotPerson) |> 
   mutate(
     AgeGroup = map_chr(SexAge, \(x) {
       match <- names(age_patterns)[str_detect(x, age_patterns)]
@@ -218,11 +242,42 @@ ssu_frame <- bg |>
   ) |>
   filter(!is.na(AgeGroup)) |>
   # collapse elements to columns
-  summarise(n = sum(elements), .by = c(BlockGroup, Tract, TotHH, TotPerson, AgeGroup)) |>
-  pivot_wider(names_from = AgeGroup, values_from = n)
+  summarise(n = sum(elements), .by = c(BlockGroup, Tract, TotHH, AgeGroup)) |>
+  pivot_wider(names_from = AgeGroup, values_from = n) |> 
+  # compute TotPerson
+  mutate(
+    TotPerson = rowSums(across(starts_with("Age")))) |> 
+  # move TotPerson
+  relocate(TotPerson, .after = "TotHH")
 
-
-
-# ── Check if this structure is correct for what we need
 
 ```
+
+
+
+```{r}
+#| echo: false
+
+
+psu_frame |> 
+  slice_sample(n=20) |> 
+  kable(
+    booktabs = TRUE,
+    format = "latex"
+  ) |>
+  kable_styling(
+    latex_options = c("striped", "scale_down", "hold_position")
+  )
+
+
+ssu_frame |> 
+  filter(Tract %in% sample(unique(Tract), 5)) |>
+  kable(
+    booktabs = TRUE,
+    format = "latex"
+  ) |>
+  kable_styling(
+    latex_options = c("striped", "scale_down", "hold_position")
+  )
+```
+
