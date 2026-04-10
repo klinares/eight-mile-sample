@@ -1,0 +1,845 @@
+---
+title: "Detroit Transportation Survey"
+subtitle: "Multi-Stage Area Probability Sample Design"
+author:
+  - name: "Effect Size"
+
+date: today
+format:
+  pdf:
+    documentclass: article
+    geometry: margin=1in
+    fontsize: 11pt
+    linestretch: 1.0
+    number-Sec.s: true
+    keep-tex: true
+    include-in-header:
+      text: |
+        \usepackage{booktabs}
+        \usepackage{longtable}
+        \usepackage{float}
+        \usepackage{amsmath}
+        \floatplacement{table}{H}
+        \floatplacement{figure}{H}
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+# Sample Design {#sec-design}
+
+## Design Goals
+
+The sample must satisfy four requirements simultaneously:
+
+-   Domain sample sizes: 1,000 respondents split equally (250 per group) across four age domains: 18--34, 35--49, 50--64, and 65+.
+-   Self-weighting within domains: every person in a given age group has the same overall selection probability, $\pi_k(d) = f_d$, so that no weighting adjustments are needed to compensate for unequal selection across PSUs within a domain.
+-   Equal workload per PSU: the total expected number of persons to be contacted is the same in every sample tract, simplifying field management and cost control.
+-   Two-stage selection: 40 tracts (PSUs) selected with probability proportional to a composite measure of size, and 1 BG (SSU) per tract, also selected PPS (MOS). Person-level sampling rates are specified for field implementation but not executed here.
+
+### Packages and setup
+
+-   We load the packages needed for data wrangling (`tidyverse`, `readxl`), sample selection (`sampling`), survey analysis (`survey`, `srvyr`, `PracTools`), spatial mapping (`sf`, `tigris`, `ggmap`, `tidycensus`, `viridis`), and report formatting (`patchwork`, `knitr`, `scales`). The `tidycensus` and `ggmap` packages each require an API key.
+
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+
+pacman::p_load(
+  tidyverse, readxl,
+  sampling,
+  survey, srvyr,
+  PracTools,
+  sf, tigris, ggmap,
+  tidycensus,
+  viridis, patchwork,
+  knitr, kableExtra, scales, here
+)
+
+options(tigris_class = "sf", tigris_use_cache = TRUE, scipen = 999)
+set.seed(-77)
+```
+
+### Data ingestion
+
+-   Quarto renders in a completely fresh R session --- it does not have access to objects loaded in the RStudio live environment. We therefore read the data files using explicit paths. The `semi_join()` on `tract_fips` restricts the Wayne County records to only those tracts that fall inside the City of Detroit boundary.
+
+```{r}
+
+# anchor to project root regardless of where the .qmd lives
+here::i_am("inputs/Detroit_MI.xlsx")
+
+input_path   <- here("inputs")
+census_tract <- "Census_Tract_FIPS_Code_Detroit_MI.csv"
+detroit_mi   <- "Detroit_MI.xlsx"
+
+tract_fips <- read_csv(
+  file.path(input_path, census_tract),
+  col_names = "GEOID",
+  col_types = cols(GEOID = col_character()),
+  skip = 1,
+  show_col_types = FALSE
+)
+
+tract <- read_excel(
+  file.path(input_path, detroit_mi),
+  sheet = "Tract"
+) |>
+  mutate(Tract = as.character(Tract)) |>
+  semi_join(tract_fips, by = c("Tract" = "GEOID")) |>
+  mutate(TotPerson = rowSums(across(starts_with("Age"))))
+
+bg <- read_excel(
+  file.path(input_path, detroit_mi),
+  sheet = "BlockGroup"
+) |>
+  mutate(
+    BlockGroup = as.character(BlockGroup),
+    Tract = substr(BlockGroup, 1, 11)
+  ) |>
+  semi_join(tract_fips, by = c("Tract" = "GEOID"))
+```
+
+## Target Population
+
+The target population consists of all non-institutionalized persons aged 18 and older residing in the City of Detroit, Michigan. The 2020 Decennial Census DHC Summary File reports approximately 480,131 adults (18+) in approximately 309,916 households across 270 eligible census tracts. The average number of adults per household is approximately 1.55.
+
+## Area Sampling Frame {#sec-frame}
+
+### Data sources
+
+The sampling frame is constructed from two files:
+
+-   **Census Tract FIPS Code Detroit MI.csv**: 280 FIPS codes identifying Detroit census tracts, from the City of Detroit Open Data Portal.
+-   **Detroit MI.xlsx**: tract- and block-group-level population data provided by the course instructors, originating from the 2020 Decennial Census DHC Summary File for Wayne County, MI. It includes housing unit counts, total person counts, and person counts by sex and age from the P12 table (Sex by Age).
+
+### Data cleaning
+
+-   Tract 26163985500 (tract 9855) appears identically 25 times in the data with zero population in every column, likely a water body or uninhabited industrial zone. Since it contributes no eligible population, we drop all instances.
+
+```{r}
+tract |>
+  filter(Tract == "26163985500") |> 
+  select(1:10) |> 
+  head() |> 
+  kable(
+    booktabs = TRUE,
+    format = "latex"
+  ) |>
+  kable_styling(
+    latex_options = c("striped", "scale_down", "hold_position")
+  )
+
+# drop this tract
+tract <- tract |> 
+  filter(Tract != "26163985500")
+
+cat("We are left with", tract |> nrow(), "tracts")
+```
+
+\newpage
+
+## Frame construction (Assignment 8)
+
+-   The DHC P12 table provides 49 Sex $\times$ Age columns per geography (e.g., `Male18to19Yrs`, `Female22to24Yrs`). We need to collapse these into the four survey age domains (18--34, 35--49, 50--64, 65+). The `age_patterns` named vector below is a single source of truth, it maps each domain label to a regex pattern that matches the corresponding P12 column names. If the domain boundaries ever change, only this vector needs updating.
+
+-   The pipeline works as follows: `pivot_longer()` reshapes all sex-by-age columns into rows, `map_chr()` classifies each row into a domain using the regex patterns, and `pivot_wider()` collapses back to one row per tract (or BG) with domain population counts as columns. Persons under 18 do not match any pattern and are removed by `filter(!is.na(AgeGroup))`.
+
+```{r}
+#| label: build-frames
+
+# single source of truth for age domain classification.
+# each name is the output domain label; each value is a
+# regex pattern matching the P12 column name fragments
+# that belong to that domain.
+age_patterns <- c(
+  "Age18to34" = "18to19|20Yrs|21Yrs|22to24|25to29|30to34",
+  "Age35to49" = "35to39|40to44|45to49",
+  "Age50to64" = "50to54|55to59|60to61|62to64",
+  "Age65plus" = "65to66|67to69|70to74|75to79|80to84|GE85"
+)
+
+# psu frame (tract-level): one row per tract with
+# TotHH, TotAdult, and four age domain counts
+psu_frame <- tract |>
+  pivot_longer(
+    # here is the regex matching
+    cols = matches("^Male[^T]|^Female[^T]"),
+    names_to = "SexAge", values_to = "elements"
+  ) |>
+  select(-TotPerson) |>
+  mutate(
+    # classify each sex-by-age column into a domain
+    AgeGroup = map_chr(SexAge, ~ {
+      match <- names(age_patterns)[str_detect(.x, age_patterns)]
+      if (length(match) == 0) NA_character_ else match
+    })
+  ) |>
+  filter(!is.na(AgeGroup)) |>
+  # sum male + female within each domain for each tract
+  summarise(n = sum(elements), .by = c(Tract, TotHH, AgeGroup)) |>
+  pivot_wider(names_from = AgeGroup, values_from = n) |>
+  mutate(TotAdult = rowSums(across(starts_with("Age")))) |>
+  relocate(TotAdult, .after = "TotHH")
+
+# ssu frame (block-group-level): same pipeline,
+# but keeps the bg and parent tract identifiers
+ssu_frame <- bg |>
+  pivot_longer(
+    cols = matches("^Male[^T]|^Female[^T]"),
+    names_to = "SexAge", values_to = "elements"
+  ) |>
+  select(-TotPerson) |>
+  mutate(
+    AgeGroup = map_chr(SexAge, ~ {
+      match <- names(age_patterns)[str_detect(.x, age_patterns)]
+      if (length(match) == 0) NA_character_ else match
+    })
+  ) |>
+  filter(!is.na(AgeGroup)) |>
+  summarise(n = sum(elements), .by = c(BlockGroup, Tract, TotHH, AgeGroup)) |>
+  pivot_wider(names_from = AgeGroup, values_from = n) |>
+  mutate(TotAdult = rowSums(across(starts_with("Age")))) |>
+  relocate(TotAdult, .after = "TotHH")
+
+cat("psu frame:", nrow(psu_frame), "tracts\n")
+cat("ssu frame:", nrow(ssu_frame), "block groups\n")
+```
+
+### Quality control and linking (VDK Ch. 11, Sec. 11.1)
+
+-   Before sample selection, we must verify that every unit in the frame can support the required workload. VDK Chapter 11 (Sec. 11.1) describes the quality control checks: (1) does each BG provide an adequate workload? (2) will any BG have a large selection probability? The key feasibility check from VDK p. 287 is that the within-BG sampling rate must not exceed 1: $$\pi_{k|ij}(d) = \frac{\bar{q} \, f_d}{S_{ij}} \leq 1 \quad \text{for every BG } j \text{ and domain } d$$ where $\bar{q}$ is the workload per BG, $f_d$ is the domain sampling rate, and $S_{ij}$ is the BG-level composite MOS. If a BG violates this, more persons would need to be selected from a domain than actually exist there.
+
+-   First, we drop tracts and BGs with zero adult population (these have $S_i = 0$ and would cause division-by-zero in the selection probability formulas). We then identify small tracts that have all their BGs violate the feasibility check, and combine them with geographic neighbors following a linking procedure introduced by Kish (1965) recommended in VDK Ch. 11. A few small BGs within otherwise large tracts also violate feasibility, but since they have near-zero MOS they are extremely unlikely to be selected by the PPS procedure; we note their existence and would apply Kish linking in the field if one were selected.
+
+```{r}
+#| label: qc-drop-zeros
+
+# drop tracts with zero adult population --- these are
+# ineligible areas (water, industrial, institutional)
+zero_tracts <- psu_frame |> filter(TotAdult == 0)
+cat("How many tracts to drop due to 0 adults?/n", 
+    "zero-adult tracts to drop:/n")
+
+zero_tracts |> select(Tract, TotHH, TotAdult) |> kable()
+
+
+psu_frame <- psu_frame |> filter(TotAdult > 0)
+ssu_frame <- ssu_frame |> filter(Tract %in% psu_frame$Tract)
+
+# also drop zero-adult BGs within remaining tracts
+cat("How many BGs to drop due to 0 adults?/n",
+  "zero-adult BGs dropped:", sum(ssu_frame$TotAdult == 0), "\n")
+
+ssu_frame <- ssu_frame |> filter(TotAdult > 0)
+
+cat("after dropping zeros, we are left with", nrow(psu_frame), "tracts,",
+    nrow(ssu_frame), "BGs\n")
+```
+
+\
+
+-   Next we compute preliminary design parameters to identify undersized units. The domain sampling rates under Approach A (selection-based, see Design Parameter section below) are $f_d = n_d^{\text{select}} / N_d$ where $n_d^{\text{select}} = 250 / r_d$ and $r_d$ is the expected response rate from the project assignment. The workload per BG is $\bar{q} = \sum_d n_d^{\text{select}} / (m \cdot \bar{n})$. The minimum BG MOS for feasibility is $\bar{q} \cdot \max(f_d)$, corresponding to roughly 62 adults depending on age mix.
+
+```{r}
+#| label: qc-prelim
+
+# design constants from the assignment
+m <- 40       # sample PSUs
+n_bar <- 1    # BGs per sample PSU
+
+# preliminary f_d from the current (pre-linking) frame
+prelim_params <- tibble(
+  domain = c("18-34", "35-49", "50-64", "65+"),
+  n_respond = rep(250, 4),
+  # given to us
+  resp_rate = c(0.35, 0.45, 0.50, 0.65),
+  N_d = c(sum(psu_frame$Age18to34), sum(psu_frame$Age35to49),
+          sum(psu_frame$Age50to64), sum(psu_frame$Age65plus))
+) |> 
+  mutate(n_select = n_respond / resp_rate, f_d = n_select / N_d)
+
+f_d_prelim <- prelim_params$f_d
+names(f_d_prelim) <- prelim_params$domain
+q_bar_prelim <- sum(prelim_params$n_select) / (m * n_bar)
+
+# preliminary bg-level mos for feasibility checks
+ssu_frame <- ssu_frame |>
+  mutate(MOS_bg = f_d_prelim["18-34"] * Age18to34 +
+           f_d_prelim["35-49"] * Age35to49 +
+           f_d_prelim["50-64"] * Age50to64 +
+           f_d_prelim["65+"] * Age65plus)
+
+# minimum mos needed: q_bar * max(f_d)
+min_mos <- q_bar_prelim * max(f_d_prelim)
+cat("What is the min BG MOS for feasibility?", round(min_mos, 4), "\n")
+
+# identify violating BGs
+ssu_violations <- ssu_frame |> filter(MOS_bg < min_mos)
+cat("How many BGs are failing feasibility?", nrow(ssu_violations), "\n\n")
+
+# which tracts have ALL their BGs failing? these are the
+# undersized tracts that need PSU-level linking
+tiny_tracts <- ssu_frame |>
+  filter(Tract %in% ssu_violations$Tract) |>
+  group_by(Tract) |>
+  summarise(n_bgs = n(),
+            n_fail = sum(MOS_bg < min_mos), .groups = "drop") |>
+  filter(n_fail == n_bgs) |> 
+  pull(Tract)
+
+cat("How many undersized tracts (all BGs fail):", length(tiny_tracts), "\n")
+psu_frame |> filter(Tract %in% tiny_tracts) |>
+  select(Tract, TotHH, TotAdult) |> 
+  kable()
+```
+
+\newpage
+
+-   We combine the undersized tracts with their nearest geographic neighbor on the FIPS-sorted frame. The combined unit's populations and MOS are summed. This is a simplified version of the Kish (1965) linking procedure, where we sort the frame, and for each undersized unit, merge it forward into the next adequately-sized unit.
+
+```{r}
+#| label: qc-link
+
+# find the nearest non-tiny neighbor for each undersized tract
+all_sorted <- psu_frame |> arrange(Tract) |> pull(Tract)
+non_tiny <- setdiff(all_sorted, tiny_tracts)
+
+psu_link_map <- tibble(original = tiny_tracts) |>
+  mutate(linked_to = map_chr(original, function(tr) {
+    fwd <- non_tiny[non_tiny > tr]
+    bwd <- non_tiny[non_tiny < tr]
+    if (length(fwd) > 0) fwd[1] else tail(bwd, 1)
+  }))
+
+cat("We link the following PSUs:\n")
+psu_link_map |> kable()
+
+# assign PSU_ID: linked tracts get their neighbor's id
+psu_frame <- psu_frame |>
+  mutate(PSU_ID = if_else(
+    Tract %in% psu_link_map$original,
+    psu_link_map$linked_to[match(Tract, psu_link_map$original)],
+    Tract))
+
+ssu_frame <- ssu_frame |>
+  mutate(PSU_ID = if_else(
+    Tract %in% psu_link_map$original,
+    psu_link_map$linked_to[match(Tract, psu_link_map$original)],
+    Tract))
+
+# aggregate to composite psu level
+psu_frame <- psu_frame |>
+  group_by(PSU_ID) |>
+  reframe(n_tracts = n(), TotHH = sum(TotHH), TotAdult = sum(TotAdult),
+            Age18to34 = sum(Age18to34), Age35to49 = sum(Age35to49),
+            Age50to64 = sum(Age50to64), Age65plus = sum(Age65plus)) |>
+  rename(Tract = PSU_ID)
+
+# update ssu_frame: drop old Tract (original parent tract id),
+# replace with PSU_ID (the linked-to tract), and drop stale MOS
+ssu_frame <- ssu_frame |>
+  select(-Tract, -MOS_bg) |>
+  rename(Tract = PSU_ID)
+
+cat("How many PSU after linking?", nrow(psu_frame), "PSUs\n")
+cat("How many combined PSUs?", sum(psu_frame$n_tracts > 1), "\n")
+```
+
+\newpage
+
+## Design parameters (Assignment 8) {#sec-params}
+
+-   The composite MOS method (VDK Sec. 10.5) requires domain sampling rates $f_d = n_d / N_d$, where $n_d$ is the desired domain sample size and $N_d$ is the domain population. VDK p. 282 defines this notation. There are two conventions for what $n_d$ means:
+
+    -   **Approach A (selection-based)**: $n_d = n_d^{\text{select}} = 250 / r_d$, the number of persons to *contact* in each domain, inflated for the expected non-response rate $r_d$. This builds NR into the MOS so the design directly yields enough selections to produce 250 respondents per domain after expected losses.
+
+    -   **Approach B (respondent-based, VDK Ch. 11 pattern)**: $n_d = 250$, the respondent target. This is how the Anne Arundel County example in VDK Table 11.1 is set up. NR inflation is then applied at the person-selection stage in the field rather than in the MOS.
+
+-   Under Approach A, the workload per BG is $\bar{q} = \sum_d n_d^{\text{select}} / (m \cdot \bar{n}) \approx 53.9$ persons to contact. Under Approach B, $\bar{q} = 1000 / 40 = 25$ respondents. We proceed with **Approach A** because it keeps all selection probabilities self-contained at the design stage --- field teams simply apply the rates; no additional NR inflation is needed.
+
+```{r}
+#| label: design-params
+
+# recompute N_d from the cleaned, linked frame
+N_d <- c(sum(psu_frame$Age18to34), sum(psu_frame$Age35to49),
+         sum(psu_frame$Age50to64), sum(psu_frame$Age65plus))
+
+# approach A: selection-based f_d
+design_params <- tibble(
+  domain = c("18-34", "35-49", "50-64", "65+"),
+  n_respond = rep(250, 4),
+  resp_rate = c(0.35, 0.45, 0.50, 0.65),
+  N_d = N_d
+) |> 
+  mutate(
+  n_select = n_respond / resp_rate, # inflate for NR
+  f_d = n_select / N_d # domain sampling rate
+)
+
+cat("Design parameters (Approach A):\n")
+
+design_params |> 
+  mutate(across(where(is.numeric), ~ round(.x, 6))) |> 
+  kable()
+
+# extract as named vector
+f_d <- design_params$f_d
+names(f_d) <- design_params$domain
+total_select <- sum(design_params$n_select)
+q_bar <- total_select / (m * n_bar)
+
+cat("Total selections (S):", round(total_select, 1), "\n")
+cat("Workload per BG (q_bar):", round(q_bar, 1), "persons\n")
+```
+
+\newpage
+
+## Composite MOS (VDK Eq. 10.1, Assignment 8) {#sec-mos}
+
+-   The composite measure of size for PSU $i$ is defined as (VDK Eq. 10.1, p. 282): $$S_i = \sum_{d=1}^{D} f_d \cdot N_i(d)$$ This quantity represents the expected sample size from PSU $i$ if the desired domain sampling rates were applied to its domain populations. The total MOS across all PSUs equals the total desired sample size: $S = \sum_{i \in U} S_i = \sum_d f_d N_d = n^{\text{select}}$ (VDK p. 282).
+
+-   PSU selection probabilities are proportional to $S_i$ (VDK p. 282): $$\pi_i = \frac{m \cdot S_i}{S}$$
+
+-   For the three-stage extension (VDK p. 286), the BG-level composite MOS is $S_{ij} = \sum_d f_d \cdot Q_{ij}(d)$ where $Q_{ij}(d)$ is the population of domain $d$ in BG $j$ of tract $i$. The BG conditional selection probability is $\pi_{j|i} = \bar{n} \cdot S_{ij} / S_i$ (VDK p. 286). Note that since $\bar{n} = 1$ in our design, $\pi_{j|i} = S_{ij} / S_i$.
+
+-   The within-BG person sampling rate for domain $d$ is (VDK p. 288): $$\pi_{k|ij}(d) = \frac{\bar{q} \, f_d}{S_{ij}}$$ The self-weighting property then follows algebraically (VDK p. 286): $$\pi_i \cdot \pi_{j|i} \cdot \pi_{k|ij}(d) = \frac{m \, S_i}{S} \cdot \frac{\bar{n} \, S_{ij}}{S_i} \cdot \frac{\bar{q} \, f_d}{S_{ij}} = \frac{m \, \bar{n} \, \bar{q}}{S} \, f_d = f_d$$ since $S = m \cdot \bar{n} \cdot \bar{q}$ (VDK p. 286).
+
+-   The workload is constant in every BG (VDK p. 287): $\sum_d q^*_{ij}(d) = \bar{q}$, where $q^*_{ij}(d) = \bar{q} \, f_d \, Q_{ij}(d) / S_{ij}$ is the expected number of domain-$d$ selections in BG $ij$ (analogous to VDK Eq. 10.2 at the SSU level).
+
+```{r}
+#| label: compute-mos
+
+# psu-level composite mos and selection probabilities
+# named vector ensures correct column-to-rate alignment
+domain_cols <- c("Age18to34", "Age35to49", "Age50to64", "Age65plus")
+
+psu_frame <- psu_frame |>
+  mutate(
+    MOS = rowSums(across(all_of(domain_cols)) * f_d),
+    pi_i = m * MOS / sum(MOS))
+
+S_total <- sum(psu_frame$MOS)
+cat("S =", round(S_total, 2),
+    "| should equal total_select =", round(total_select, 2), "\n")
+cat("pi_i range:", round(range(psu_frame$pi_i), 4), "\n")
+cat("any pi_i > 1?", any(psu_frame$pi_i > 1), "\n")
+
+# bg-level composite mos
+ssu_frame <- ssu_frame |>
+  mutate(MOS_bg = f_d["18-34"] * Age18to34 + f_d["35-49"] * Age35to49 +
+           f_d["50-64"] * Age50to64 + f_d["65+"] * Age65plus)
+```
+
+## VDK 10.1 verification table {#sec-vdk-verify}
+
+-   Following the spreadsheet layout in VDK Example 10.1 (Table 10.1, p. 284), we verify four properties at the PSU level. These are the same checks Kevin performed in Assignment 8 (VDK Exercise 10.2) using the two-domain example, extended here to four domains and applied to our Detroit frame.
+
+    1.  **Feasibility**: $f_d \leq S_i / \bar{q}$ for every domain, equivalently $\bar{q} f_d / S_i \leq 1$.
+    2.  **Expected domain sample sizes**: $n^*_i(d) = \bar{q} \, f_d \, N_i(d) / S_i$ (VDK Eq. 10.2 adapted to our notation).
+    3.  **Constant workload**: $\sum_d n^*_i(d) = \bar{q}$ for every PSU.
+    4.  **Self-weighting**: $\pi_i \cdot \pi_{k|i}(d) = f_d$, where $\pi_{k|i}(d) = \bar{q} \, f_d / S_i$ is the within-PSU person rate.
+
+```{r}
+#| label: vdk-verify
+
+vdk_table <- psu_frame |>
+  mutate(
+    # within-psu domain rates (= q_bar * f_d / S_i)
+    rate_18_34  = q_bar * f_d["18-34"]  / MOS,
+    rate_35_49  = q_bar * f_d["35-49"]  / MOS,
+    rate_50_64  = q_bar * f_d["50-64"]  / MOS,
+    rate_65plus = q_bar * f_d["65+"]    / MOS,
+    # (1) feasibility: all rates must be <= 1
+    feas_18_34 = rate_18_34 <= 1, feas_35_49 = rate_35_49 <= 1,
+    feas_50_64 = rate_50_64 <= 1, feas_65plus = rate_65plus <= 1,
+    # (2) expected domain sample sizes
+    exp_n_18_34  = rate_18_34 * Age18to34,
+    exp_n_35_49  = rate_35_49 * Age35to49,
+    exp_n_50_64  = rate_50_64 * Age50to64,
+    exp_n_65plus = rate_65plus * Age65plus,
+    # (3) total workload per psu
+    exp_workload = exp_n_18_34 + exp_n_35_49 + exp_n_50_64 + exp_n_65plus,
+    # (4) self-weighting: pi_i * rate_d should equal f_d
+    sw_18_34 = pi_i * rate_18_34, sw_35_49 = pi_i * rate_35_49,
+    sw_50_64 = pi_i * rate_50_64, sw_65plus = pi_i * rate_65plus)
+
+cat("(1) all within-psu rates <= 1?\n")
+vdk_table |> summarise(across(starts_with("feas"), ~ all(.x))) |> kable()
+
+cat("\n(3) workload per psu (should all =", round(q_bar, 2), "):\n")
+summary(vdk_table$exp_workload)
+
+cat("\n(4) self-weighting check (first 5 PSUs):\n")
+cat("target f_d:", round(f_d, 6), "\n")
+vdk_table |> select(Tract, starts_with("sw_")) |>
+  slice_head(n = 5) |>
+  mutate(across(where(is.numeric), ~ round(.x, 6))) |> kable()
+```
+
+## Uniform rate discussion
+
+-   Could a single sampling rate $f = n^{\text{select}} / N_{\text{adult}}$ be used for all persons regardless of age domain? The table below shows the expected number of respondents per domain under such a uniform rate. Because response rates vary substantially (0.35 for ages 18--34 vs. 0.65 for 65+), a uniform rate over-samples domains with higher response rates and under-samples those with lower rates. The 35--49 group falls approximately 8.5% short of the 250 target. The composite MOS avoids this problem by building domain-specific rates into the design from the start.
+
+```{r}
+#| label: uniform-rate
+
+f_uniform <- total_select / sum(psu_frame$TotAdult)
+design_params |>
+  mutate(exp_respond = f_uniform * N_d * resp_rate,
+         shortfall_pct = round((n_respond - exp_respond) / n_respond * 100, 1)) |>
+  select(domain, N_d, exp_respond, shortfall_pct) |> kable()
+```
+
+# Sample Selection {#sec-selection}
+
+-   We select the sample in two stages using `UPsystematic()` from the `sampling` package (Tille and Matei, 2016), which implements Madow's systematic PPS method. The PSU frame is sorted by FIPS code before selection, which provides **implicit geographic stratification** --- adjacent tracts on the sorted list tend to be geographic neighbors, so the systematic selection spreads the sample across the city (VDK Sec. 3.3).
+
+-   The assignment specifies `set.seed(-77)` for reproducibility. Systematic PPS does not permit computation of exact joint selection probabilities ($\pi_{ii'} = 0$ for some pairs), which precludes the Horvitz--Thompson variance estimator. In practice, we use the with-replacement variance approximation via paired analytic strata (see Sec. 6).
+
+## Stage 1: PSU selection
+
+-   We select $m = 40$ tracts with inclusion probabilities $\pi_i = m \cdot S_i / S$. The `UPsystematic()` function takes these as input and returns a 0/1 indicator for each PSU.
+
+```{r}
+#| label: psu-selection
+
+# sort by fips for implicit geographic stratification
+psu_frame <- psu_frame |> arrange(Tract)
+
+set.seed(-77)
+psu_sample <- psu_frame |>
+  mutate(selected = UPsystematic(pik = pi_i)) |>
+  filter(selected == 1)
+cat("PSUs selected:", nrow(psu_sample), "\n")
+```
+
+## Stage 2: SSU (block group) selection
+
+-   Within each of the 40 sample tracts, we select $\bar{n} = 1$ BG with probability proportional to the BG-level composite MOS: $\pi_{j|i} = \bar{n} \cdot S_{ij} / S_i = S_{ij} / S_i$ (VDK p. 286). For tracts with only a single BG, the selection is deterministic ($\pi_{j|i} = 1$). The `select_one_bg()` helper handles both cases.
+
+```{r}
+#| label: ssu-selection
+
+# get BGs in sample tracts and compute conditional probabilities
+bg_in_sample <- ssu_frame |>
+  filter(Tract %in% psu_sample$Tract) |>
+  left_join(psu_sample |> select(Tract, MOS_psu = MOS), by = "Tract") |>
+  mutate(pij_given_i = n_bar * MOS_bg / MOS_psu)
+
+# helper: select 1 bg from a tract via systematic pps
+set.seed(-77)
+select_one_bg <- function(bg_sub) {
+  if (nrow(bg_sub) == 1) return(bg_sub |> mutate(ssu_selected = 1L))
+  pik_bg <- pmin(bg_sub$pij_given_i / sum(bg_sub$pij_given_i) * n_bar, 1)
+  bg_sub |> mutate(ssu_selected = as.integer(UPsystematic(pik = pik_bg)))
+}
+
+bg_selected <- bg_in_sample |>
+  group_by(Tract) |> group_split() |>
+  map_dfr(select_one_bg) |> filter(ssu_selected == 1)
+cat("BGs selected:", nrow(bg_selected), "\n")
+```
+
+## Selection probabilities
+
+-   The joint selection probability of BG $j$ in tract $i$ is $\pi_{ij} = \pi_i \cdot \pi_{j|i}$ (VDK p. 308, Ch. 11). This is what our two-stage selection actually produces. We also compute the person-level domain rates $\pi_{k|ij}(d) = \bar{q} f_d / S_{ij}$ that field teams would implement, and verify that the expected workload per BG equals $\bar{q}$.
+
+```{r}
+#| label: sel-probs
+
+sample_bgs <- bg_selected |>
+  left_join(psu_sample |> select(Tract, pi_i), by = "Tract") |>
+  mutate(
+    # joint bg selection probability (our actual two-stage output)
+    pi_ij = pi_i * pij_given_i,
+    # person-level rates for field use (VDK p. 287)
+    rate_18_34  = q_bar * f_d["18-34"]  / MOS_bg,
+    rate_35_49  = q_bar * f_d["35-49"]  / MOS_bg,
+    rate_50_64  = q_bar * f_d["50-64"]  / MOS_bg,
+    rate_65plus = q_bar * f_d["65+"]    / MOS_bg,
+    # expected workload = sum of rate * domain pop in this bg
+    exp_workload = rate_18_34 * Age18to34 + rate_35_49 * Age35to49 +
+      rate_50_64 * Age50to64 + rate_65plus * Age65plus)
+
+cat("pi_ij range:", round(range(sample_bgs$pi_ij), 4), "\n")
+cat("any pi_ij > 1?", any(sample_bgs$pi_ij > 1), "\n")
+cat("\nworkload per BG (should =", round(q_bar, 1), "):\n")
+summary(sample_bgs$exp_workload)
+```
+
+## Description of household and person selection (third stage)
+
+-   In area probability sampling, persons are reached **through households** (VDK Ch. 10; Lecture Slide 21). We do not execute this stage because no address listing exists, but we describe the procedure that field teams would follow in each selected BG.
+
+-   The key outcome variables --- vehicle ownership, transit use, skipping trips, asking for rides --- are **household-level or household-correlated** characteristics. If multiple persons from the same household were selected, their responses would be correlated, inflating the design effect and reducing precision. For this reason we recommend selecting **one eligible adult per sampled household** using a random selection method such as the Kish grid or next-birthday rule.
+
+-   The field procedure within each selected BG:
+
+    1.  **Household listing**: interviewers compile a complete listing of all occupied housing units using maps and Census address data (Lecture Ch. 10 Slide 21).
+    2.  **Household sampling**: households are sampled systematically at a rate that, combined with $\pi_{ij}$, yields the desired person-level rates. With approximately 1.55 eligible adults per household in Detroit, the HH rate is adjusted accordingly.
+    3.  **Screening**: at each sampled HH, interviewers administer a brief screener to enumerate all persons 18+ and classify each into an age domain.
+    4.  **Within-HH selection**: one eligible adult is selected at random. The selection probability is set to maintain $\pi_{k|ij}(d) = \bar{q} f_d / S_{ij}$ for each domain $d$.
+    5.  **Verification**: the overall probability is $\pi_i \cdot \pi_{j|i} \cdot \pi_{k|ij}(d) = f_d$, confirming self-weighting. The expected sample sizes are not integers --- as VDK notes after Example 10.1, it is important to sample at the specified rates rather than rounding to fixed counts.
+
+# Anticipated Precision {#sec-precision}
+
+-   For the key survey variable --- the proportion of Detroit residents whose main means of transportation is public transit --- precision under the cluster design depends on the design effect. For a two-stage cluster sample, the approximate design effect is (VDK Ch. 9, Eq. 9.5; Lecture Ch. 9 Slides 51--53): $$\text{deff} \approx 1 + (\bar{b} - 1) \, \delta$$ where $\bar{b}$ is the average number of respondents per PSU ($\approx 25$ in our design) and $\delta$ is the intraclass correlation coefficient measuring homogeneity within tracts. Values of $\delta$ for demographic/behavioral variables in U.S. urban populations typically range from 0.01 to 0.05, yielding deffs between 1.2 and 2.2.
+
+-   The variance of an estimated proportion $\hat{p}$ under the cluster design is approximately: $$\text{Var}(\hat{p}) \approx \text{deff} \cdot \frac{p(1-p)}{n}$$ An analyst would estimate this using the **ultimate cluster variance estimator** (Lecture Ch. 9 Slide 65), which in the with-replacement form is: $$v_{PSU} = \frac{m}{m-1} \sum_{i \in s} \left( \sum_{k \in s_i} w_k y_k - \frac{\sum_{i \in s} \sum_{k \in s_i} w_k y_k}{m} \right)^2$$ This is implemented automatically by `survey::svymean()` when the design object specifies PSUs and strata (see Sec. 6).
+
+-   The table below shows the standard error, coefficient of variation, and 95% margin of error for a range of proportions and design effects at $n = 1000$ total respondents.
+
+```{r}
+#| label: precision
+
+expand_grid(p = c(.10, .15, .20, .25, .30), deff = c(1.5, 2.0, 2.5)) |>
+  mutate(n = 1000,
+         se = sqrt(deff * p * (1 - p) / n),
+         cv = se / p,
+         moe = 1.96 * se) |>
+  mutate(across(where(is.numeric), ~ round(.x, 4))) |>
+  kable(n = Inf)
+```
+
+-   For a transit use proportion of approximately $p = 0.20$ with $\text{deff} = 2.0$, the 95% margin of error is $\pm$ `r round(1.96 * sqrt(2 * .20 * .80 / 1000), 3)`, which is adequate for most policy analyses. Domain-level estimates (250 respondents each) would have approximately double the margin of error, around $\pm$ `r round(1.96 * sqrt(2 * .20 * .80 / 250), 3)`.
+
+# Weighting Plan {#sec-weighting}
+
+## Overview for managers
+
+Survey weights are numbers assigned to each respondent that allow us to produce estimates representative of the entire Detroit adult population. Without proper weighting, groups that were oversampled or that had higher response rates would be overrepresented in the estimates.
+
+## Base weights (VDK Ch. 13, Sec. 3; Lecture Slides 17--23)
+
+-   The base weight (also called design weight) for a respondent is the inverse of the overall selection probability. At the BG level, our two-stage selection gives a joint probability of $\pi_{ij} = \pi_i \cdot \pi_{j|i}$, so the BG-level base weight is: $$d_{0,ij} = \frac{1}{\pi_i \cdot \pi_{j|i}}$$
+
+-   Under the full three-stage self-weighting design, the person-level probability in domain $d$ would be $\pi_k(d) = f_d$ (VDK p. 283), giving a base weight of $d_0(d) = 1/f_d = N_d / n_d^{\text{select}}$ that is constant within each domain (Lecture Ch. 13, Example 13.3).
+
+-   **QC check** (Lecture Slide 20): the sum of base weights across the expected sample in each domain should approximate the domain population total $N_d$.
+
+## Unknown eligibility (VDK Ch. 13, Sec. 4; Lecture Slides 24--31)
+
+-   During field listing, interviewers may encounter housing units whose eligibility cannot be determined --- for example, units that appear occupied but where contact is never made, or addresses that turn out to be vacant or demolished. These cases are classified as unknown eligibility ($s_{UNK}$).
+
+-   The standard approach is to redistribute the weight of unknowns to cases with known eligibility status within adjustment classes formed from frame variables available for all cases (Lecture Slide 30): $$a_{1b} = \frac{\sum_{i \in s_b} d_{0i}}{\sum_{i \in s_{b,KN}} d_{0i}}$$ where $s_b$ is all sample cases in class $b$ and $s_{b,KN}$ is the subset whose eligibility is known. The adjusted weight becomes $d_{1i} = a_{1b} \cdot d_{0i}$ for cases in $s_{b,KN}$ and zero for unknowns. Adjustment classes could be formed from tract-level Census demographics (e.g., vacancy rates, housing type).
+
+## Non-response adjustment (VDK Ch. 13, Sec. 5.2; Lecture Slides 45--49)
+
+-   Among cases known to be eligible, some will decline to participate. The weighting class NR adjustment within class $c$ is (Lecture Slide 48): $$a_{2c} = \frac{\sum_{i \in s_{c,E}} d_{1i}}{\sum_{i \in s_{c,ER}} d_{1i}}$$ where $s_{c,E}$ is the set of all eligible cases and $s_{c,ER}$ is the subset of eligible respondents in class $c$.
+
+-   A natural choice for adjustment classes is the four age domains, since response rates are expected to vary substantially (0.35 for ages 18--34 vs. 0.65 for 65+). If the response probability is approximately constant within each domain, this simplifies to $a_{2c} \approx 1/r_d$ (Lecture Slide 50).
+
+# Variance Estimation {#sec-variance}
+
+## Overview for managers
+
+Because the sample is selected in stages (tracts, then block groups), standard formulas that assume simple random sampling would underestimate the uncertainty of survey estimates. Special variance estimation methods are needed that account for the clustering of persons within tracts. We describe two approaches: Taylor series linearization (our primary recommendation) and jackknife repeated replication (an alternative).
+
+## Taylor series linearization (primary method)
+
+-   For systematic PPS selection, exact joint selection probabilities are not available. The standard practice (VDK Sec. 3.3) is to form **paired analytic strata** by grouping adjacent sample PSUs in the FIPS-sorted selection order. With $m = 40$ sample PSUs, this creates 20 strata, each containing 2 PSUs.
+
+-   Within this framework, `survey::svydesign()` uses the ultimate cluster variance estimator (Lecture Ch. 9 Slide 65) to estimate standard errors via Taylor series linearization. This treats each PSU as a "cluster" and captures all within-PSU variability --- from both the SSU and person stages --- through the between-PSU variation.
+
+```{r}
+#| label: variance-strata
+
+# pair adjacent sample PSUs into analytic strata
+psu_sample_ve <- psu_sample |>
+  arrange(Tract) |>
+  mutate(psu_order = row_number(),
+         analytic_stratum = ceiling(psu_order / 2))
+
+cat("analytic strata:", max(psu_sample_ve$analytic_stratum), "\n")
+psu_sample_ve |> count(analytic_stratum) |> kable()
+```
+
+-   The analyst would set up the survey design object as follows after data collection. The `id` identifies PSUs (tracts), `strata` identifies the paired analytic strata, and `weights` are the final NR-adjusted weights. The `nest = TRUE` argument tells `svydesign` that PSU IDs restart within each stratum.
+
+```{r}
+#| label: survey-template-tsl
+#| eval: false
+
+# after data collection, set up the tsl design:
+detroit_design <- svydesign(
+  id      = ~ psu_id,
+  strata  = ~ analytic_stratum,
+  weights = ~ final_weight,
+  data    = survey_data,
+  nest    = TRUE)
+
+# estimate proportion using public transit as main transport
+svymean(~ I(transit == "public"), design = detroit_design)
+
+# domain estimates by age group
+svyby(~ I(transit == "public"), ~ age_domain,
+      design = detroit_design, svymean)
+```
+
+## Jackknife repeated replication (alternative method)
+
+-   As an alternative to linearization, **delete-one-PSU jackknife (JKn)** can be used (VDK Ch. 15). This method systematically drops one PSU at a time, re-estimates the statistic from each reduced sample, and computes the variance from the spread of these $m = 40$ replicate estimates. JKn is especially useful for nonlinear estimators (e.g., ratios, quantiles) where the Taylor approximation may be less accurate.
+
+```{r}
+#| label: survey-template-jrr
+#| eval: false
+
+# convert the tsl design to jackknife replicate weights
+detroit_jk <- as.svrepdesign(
+  design = detroit_design,
+  type   = "JKn")
+
+# same estimators, variance computed via 40 replicates
+svymean(~ I(transit == "public"), design = detroit_jk)
+```
+
+# Maps {#sec-maps}
+
+-   We produce maps of the Detroit sampling frame and the selected sample. The `ggmap` versions use Stadia Maps basemap tiles (matching the Assignment 7 style) to provide geographic context --- roads, water features, and neighborhood boundaries are visible beneath the choropleth layers. The `geom_sf` fallback versions render without an API key.
+
+```{r}
+#| label: shapefiles
+#| cache: true
+
+# tigris kables download progress that ignores quarto's
+# message/warning suppression, so we capture it manually
+invisible(capture.output(suppressMessages({
+  detroit_tracts_sf <- tracts(state = "MI", county = "Wayne", year = 2020) |>
+    right_join(tract_fips, by = "GEOID") |> st_transform(crs = 4326)
+
+  detroit_bgs_sf <- block_groups(state = "MI", county = "Wayne", year = 2020) |>
+    mutate(GEOIDt = str_sub(GEOID, 1, 11)) |>
+    right_join(tract_fips, by = c("GEOIDt" = "GEOID")) |>
+    select(-GEOIDt) |> st_transform(crs = 4326)
+})))
+
+```
+
+```{r}
+#| label: basemap
+#| cache: true
+#| eval: false
+
+# detroit bounding box for stadia tiles
+detroit_bbox <- c(left = -83.29, bottom = 42.25, right = -82.91, top = 42.45)
+detroit_basemap <- get_stadiamap(bbox = detroit_bbox, zoom = 12,
+                                  maptype = "stamen_toner_lite")
+
+# shared theme matching assignment 7
+map_theme <- theme_void() +
+  theme(plot.title = element_text(face = "bold", size = 13, hjust = .5),
+        plot.subtitle = element_text(size = 9, hjust = .5, color = "gray40"),
+        legend.title = element_text(face = "bold", size = 9),
+        legend.text = element_text(size = 8),
+        legend.key.height = unit(.8, "cm"),
+        legend.key.width = unit(.4, "cm"),
+        plot.margin = margin(-5, 4, -5, 4))
+```
+
+```{r}
+#| label: fig-ggmap-base
+#| fig-height: 7
+#| eval: false
+
+# ggmap: all tracts and block groups on basemap
+ggmap(detroit_basemap) +
+  geom_sf(data = detroit_bgs_sf, fill = NA,
+          linetype = "dotted", linewidth = 0.2, color = "grey50",
+          inherit.aes = FALSE) +
+  geom_sf(data = detroit_tracts_sf, fill = NA,
+          color = "black", linewidth = 0.3, inherit.aes = FALSE) +
+  labs(title = "City of Detroit",
+       subtitle = "Census Tracts (solid) and Block Groups (dotted)") +
+  map_theme
+```
+
+```{r}
+#| label: fig-ggmap-sample
+#| fig-height: 7
+#| eval: false
+
+# ggmap: selected tracts (blue fill) and selected BGs (red outline)
+ggmap(detroit_basemap) +
+  geom_sf(data = detroit_tracts_sf, fill = NA,
+          color = "grey70", linewidth = 0.2, inherit.aes = FALSE) +
+  geom_sf(data = detroit_tracts_sf |> filter(GEOID %in% psu_sample$Tract),
+          fill = viridis(1, begin = 0.4, alpha = 0.3),
+          color = viridis(1, begin = 0.4), linewidth = 0.5,
+          inherit.aes = FALSE) +
+  geom_sf(data = detroit_bgs_sf |> filter(GEOID %in% sample_bgs$BlockGroup),
+          fill = NA, color = "red", linewidth = 0.7, inherit.aes = FALSE) +
+  labs(title = "Selected Sample: 40 Tracts and Block Groups",
+       subtitle = "Blue fill = sample tracts; Red outline = selected BGs") +
+  map_theme
+```
+
+### Fallback maps (no API key required)
+
+```{r}
+#| label: fig-fallback-base
+#| fig-height: 6
+
+ggplot() +
+  geom_sf(data = detroit_bgs_sf, fill = NA,
+          linetype = "dotted", linewidth = 0.2, color = "grey50") +
+  geom_sf(data = detroit_tracts_sf, fill = NA,
+          color = "black", linewidth = 0.4) +
+  labs(title = "City of Detroit",
+       subtitle = "Tracts (solid) and Block Groups (dotted)") +
+  theme_void(base_size = 10)
+```
+
+```{r}
+#| label: fig-fallback-sample
+#| fig-height: 6
+
+ggplot() +
+  geom_sf(data = detroit_tracts_sf, fill = NA,
+          color = "grey70", linewidth = 0.3) +
+  geom_sf(data = detroit_tracts_sf |> filter(GEOID %in% psu_sample$Tract),
+          fill = viridis(1, begin = 0.4, alpha = 0.3),
+          color = viridis(1, begin = 0.4), linewidth = 0.6) +
+  geom_sf(data = detroit_bgs_sf |> filter(GEOID %in% sample_bgs$BlockGroup),
+          fill = NA, color = "red", linewidth = 0.8) +
+  labs(title = "Selected Sample: 40 Tracts and Block Groups",
+       subtitle = "Blue = sample tracts; Red = selected BGs") +
+  theme_void(base_size = 10)
+```
+
+# Appendix {#sec-appendix}
+
+## A. Sample PSU and SSU listing
+
+-   The table below lists all 40 selected BGs with their Census population data, composite MOS, selection probabilities at each stage ($\pi_i$ and $\pi_{j|i}$), the joint BG probability ($\pi_{ij}$), and the domain-specific person sampling rates that field teams would implement. The rates are listed in the `rate_` columns.
+
+```{r}
+#| label: sample-listing
+
+sample_listing <- sample_bgs |>
+  select(Tract, BlockGroup, TotAdult, starts_with("Age"),
+         MOS_bg, pi_i, pij_given_i, pi_ij,
+         starts_with("rate_"), exp_workload) |>
+  arrange(Tract)
+
+sample_listing |>
+  mutate(across(where(is.numeric), ~ round(.x, 4))) |>
+  kable(n = Inf)
+```
+
+## B. Export files
+
+```{r}
+#| label: export
+
+# uncomment when paths are configured
+# write_csv(psu_frame, here("paper", "FRAME_PSU_EffectSize.csv"))
+# write_csv(ssu_frame, here("paper", "FRAME_BG_EffectSize.csv"))
+# write_csv(sample_listing, here("paper", "SAMPLE_EffectSize.csv"))
+```
+
+## C. AI disclosure
+
+This project utilized **Claude (Anthropic, Opus 4.6)** for code development, report drafting, and cross-checking calculations against VDK textbook formulas and lecture slide materials. All AI outputs were reviewed, verified against source materials, and modified by team members before inclusion.

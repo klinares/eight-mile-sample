@@ -19,57 +19,29 @@ execute:
   cache: true
 ---
 
-### These are the packages we will be using. The [tidycensus](https://walker-data.com/tidycensus/) is the only package that requires an api key
-
 ```{r}
 #| label: setup
 #| echo: false
 #| message: false
 #| warning: false
 
-# ──────────────────────────────────────────────────────
-# Load Required Packages
-# ──────────────────────────────────────────────────────
-library(tidyverse)      # Data wrangling and visualization
-library(readxl)         # Read Excel files
-library(sampling)       # Survey sample selection (UPsystematic, etc.)
-library(survey)         # Survey analysis
-library(srvyr)          # Tidyverse-friendly survey analysis
-library(PracTools)      # Practical tools for survey design
-library(sf)             # Spatial data handling
-library(tigris)         # Census TIGER shapefiles
-library(tidycensus)     # Census data API
-library(viridis)        # Color-blind friendly palettes
-library(patchwork)      # Combine ggplots
-library(knitr)          # Table formatting
-library(kableExtra)     # Enhanced tables
-library(scales)         # Number formatting
-library(here)           # file manager
+pacman::p_load(
+  tidyverse, readxl,
+  sampling,
+  survey, srvyr,
+  PracTools,
+  sf, tigris, ggmap,
+  tidycensus,
+  viridis, patchwork,
+  knitr, scales, here
+)
 
-
-# tigris Options
-options(tigris_class = "sf")
-options(tigris_use_cache = TRUE)
-
-# set random seed
+options(tigris_class = "sf", tigris_use_cache = TRUE, scipen = 999)
 set.seed(-77)
 ```
 
-#### Once you request your api key, you will need to save it locally and not share it in any of the scripts that will go on github. We may also use the stadia package for plots
-
-```{r}
-
-# paths may vary
-#api_keys <- read_csv("D:/repos/api-keys.csv", show_col_types = FALSE)
-
-```
-
-
-
 ```{r}
 #| include: false
-
-### Quarto is independant from rstudio live session meaning that when it renders, it is not using the data objects that are loaded in locally, but rather it is trying to find them. We will need this code to read in the data.
 
 
 # Anchor to project root regardless of where the .qmd lives
@@ -106,178 +78,12 @@ bg <- read_excel(
   semi_join(tract_fips, by = c("Tract" = "GEOID"))
 ```
 
-
-
-
 \newpage
 
 # Introduction {#sec-intro}
 
-This report will capture the the design of a multi-stage area probability sample for a face-to-face survey of Detroit, Michigan residents. The survey examines transportation security and transportation use, with key outcome variables including
+This report describes the design of a multi-stage area probability sample for a face-to-face survey of Detroit, Michigan residents. The survey examines transportation security and transportation use, with key outcome variables including a) the proportion of residents in households without a vehicle, b) the proportion whose main transportation is public transit, c) the proportion who skip destinations due to transportation problems, and d) the proportion who sought transportation help from friends, family, or neighbors.
 
--   the proportion of residents in households without a vehicle
+The sample uses a two-stage selection of census tracts (PSUs) and block groups (SSUs). Since there is no address listing or roster of persons exists prior to fieldwork, we do not execute person-level selection in this report. Instead, we describe how field teams would list households in each selected block group and select respondents through those households, whhich is a standard approach in area probability sampling when absent person-level frame (VDK Ch. 10; Lecture Ch. 10 Slide 21). The key outcome variables are household-level (e.g., vehicle ownership is shared among all members of a household), which further motivates reaching persons through households and selecting only one adult per household to avoid correlated observations.
 
--   the proportion whose main transportation is public transit, the proportion who skip destinations due to transportation problems
-
--   the proportion who sought transportation help from friends, family, or neighbors.
-
-The sample uses a three-stage design:
-
-1.  Stage 1: Census tracts as primary sampling units (PSUs),
-2.  Stage 2: Block groups (BGs) as secondary sampling units (SSUs), and
-3.  Stage 2: Persons as elements.
-
-### Design Goals
-
-The design goals are to yield 1,000 total respondents (see table below) while achieving a self-weighting sample within each age group and equal interviewer workload in each sample PSU. These dual objectives are accomplished through the composite measure of size (MOS) technique described in VDK.
-
-### Deliverable Requiremetns
-
-The report will be structured for a dual audience: managers seeking a high-level understanding of the sample design and its rationale, and survey statisticians requiring the mathematical details, selection probabilities, and variance estimation guidance.
-
-# Sample Design {#sec-design}
-
-## Design Goals
-
-The sample must satisfy four requirements simultaneously:
-
-1.  **Total sample size**: 1,000 respondents split equally (250 per group) across four age domains.
-2.  **Self-weighting within domains**: Every person in a given age group has the same overall selection probability, i.e., $\pi_k(d) = f_d$ for domain $d$.
-3.  **Equal workload per PSU**: The total expected number of selected persons is the same across all 40 sample tracts.
-4.  **Multi-stage selection**: 40 tracts (PSUs), 1 BG per tract (SSU), and persons selected within BGs at domain-specific rates.
-
-## Target Population
-
-The target population consists of all non-institutionalized persons aged 18 and older residing in the City of Detroit, Michigan. According to the 2020 Decennial Census Demographic and Housing Characteristics (DHC) Summary File, Detroit contains approximately 480,131 adults (18+) across 270 eligible census tracts.
-
-## Area Sampling Frame {#sec-frame}
-
-### Data Sources
-
-The sampling frame is constructed from two files:
-
--   **Census Tract FIPS Code Detroit MI.csv**: A list of 280 FIPS codes identifying Census tracts within the City of Detroit, obtained from the City of Detroit Open Data Portal.
-
--   **Detroit MI.xlsx**: Census tract- and block group-level aggregate data from the 2020 Decennial Census DHC Summary File, downloaded via the `tidycensus` R package for Wayne County, MI and merged with the Detroit tract FIPS codes. Includes housing unit counts (`H1_001N`), total person counts, and detailed person counts by Sex $\times$ Age (`P12` table).
-
-### Data cleaning (still in development)
-
-First, there appears to be a tract (26163985500) that might be a body of water and has 0 population and shows up identically 25 times in the tract dataset. We will drop it since it does not contribute to our analysis.
-
-```{r}
-tract |>
-  filter(Tract == "26163985500") |> 
-  select(1:10) |> 
-  head() |> 
-  kable(
-    booktabs = TRUE,
-    format = "latex"
-  ) |>
-  kable_styling(
-    latex_options = c("striped", "scale_down", "hold_position")
-  )
-
-# drop this tract
-tract <- tract |> 
-  filter(Tract != "26163985500")
-
-tract |> nrow() |> kable()
-```
-
-
-
--   We can now restructure the datasets by PSU and SSU.
-
-```{r}
-
-# bin age based on what was given to us 
-age_patterns <- c(
-  "Age18to34" = "18to19|20Yrs|21Yrs|22to24|25to29|30to34",
-  "Age35to49" = "35to39|40to44|45to49",
-  "Age50to64" = "50to54|55to59|60to61|62to64",
-  "Age65plus" = "65to66|67to69|70to74|75to79|80to84|GE85"
-)
-
-# PSU Frame (tract-level)
-## first, pivot longer by gender and age
-psu_frame <- tract |>
-  pivot_longer(
-    cols = matches("^Male[^T]|^Female[^T]"),
-    names_to = "SexAge",
-    values_to = "elements"
-  ) |>
-  # drop TotPerson, we compute this later
-  select(-TotPerson) |> 
-  mutate(
-    # using age_pattern, create recode age
-    AgeGroup = map_chr(SexAge, \(x) {
-    match <- names(age_patterns)[str_detect(x, age_patterns)]
-    if (length(match) == 0) NA_character_ else match
-  })
-) |>
-  filter(!is.na(AgeGroup)) |>
-  # collapse elements to columns
-  summarise(n = sum(elements), .by = c(Tract, TotHH, AgeGroup)) |>
-  pivot_wider(names_from = AgeGroup, values_from = n) |> 
-  # compute TotPerson
-  mutate(
-    TotPerson = rowSums(across(starts_with("Age")))) |> 
-  # move TotPerson
-  relocate(TotPerson, .after = "TotHH")
-
-# SSU Frame (block group-level)
-ssu_frame <- bg |>
-  pivot_longer(
-    cols = matches("^Male[^T]|^Female[^T]"),
-    names_to = "SexAge",
-    values_to = "elements"
-  ) |>
-   # drop TotPerson, we compute this later
-  select(-TotPerson) |> 
-  mutate(
-    AgeGroup = map_chr(SexAge, \(x) {
-      match <- names(age_patterns)[str_detect(x, age_patterns)]
-      if (length(match) == 0) NA_character_ else match
-    })
-  ) |>
-  filter(!is.na(AgeGroup)) |>
-  # collapse elements to columns
-  summarise(n = sum(elements), .by = c(BlockGroup, Tract, TotHH, AgeGroup)) |>
-  pivot_wider(names_from = AgeGroup, values_from = n) |> 
-  # compute TotPerson
-  mutate(
-    TotPerson = rowSums(across(starts_with("Age")))) |> 
-  # move TotPerson
-  relocate(TotPerson, .after = "TotHH")
-
-
-```
-
-
-
-```{r}
-#| echo: false
-
-
-psu_frame |> 
-  slice_sample(n=20) |> 
-  kable(
-    booktabs = TRUE,
-    format = "latex"
-  ) |>
-  kable_styling(
-    latex_options = c("striped", "scale_down", "hold_position")
-  )
-
-
-ssu_frame |> 
-  filter(Tract %in% sample(unique(Tract), 5)) |>
-  kable(
-    booktabs = TRUE,
-    format = "latex"
-  ) |>
-  kable_styling(
-    latex_options = c("striped", "scale_down", "hold_position")
-  )
-```
-
+The design goals are to yield 1,000 total respondents while achieving a self-weighting sample within each age group and equal interviewer workload in each sample PSU. These dual objectives are accomplished through the composite measure of size (MOS) technique described in VDK Chapter 10, Section 10.5. This report will coverv 1) the construction and cleaning of the sampling frame, 2) composite MOS computation and verification, 3) sample selection via systematic PPS, 4) anticipated precision, 5) a description of the weighting plan, 6) variance estimation guidance, 7) maps of the frame and sample, and 8) a sample listing appendix.
