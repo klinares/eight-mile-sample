@@ -236,8 +236,8 @@ cat("ssu frame:", nrow(ssu_frame), "block groups\n")
 # drop tracts with zero adult population --- these are
 # ineligible areas (water, industrial, institutional)
 zero_tracts <- psu_frame |> filter(TotAdult == 0)
-cat("How many tracts to drop due to 0 adults?/n", 
-    "zero-adult tracts to drop:/n")
+cat("How many tracts to drop due to 0 adults?\n", 
+    "zero-adult tracts to drop:\n")
 
 zero_tracts |> select(Tract, TotHH, TotAdult) |> kable()
 
