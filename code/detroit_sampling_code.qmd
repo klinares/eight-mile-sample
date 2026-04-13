@@ -352,6 +352,23 @@ cat("How many PSUs after linking?", nrow(psu_frame), "PSUs\n")
 cat("How many combined PSUs?", n_distinct(psu_link_map$linked_to), "\n")
 ```
 
+```{r}
+#| label: tbl-frame-descriptives
+#| tbl-cap: "Descriptive statistics for the PSU sampling frame"
+
+psu_frame |>
+  summarise(
+    across(c(TotHH, TotAdult, Age18to34, Age35to49, Age50to64, Age65plus),
+           list(Mean = mean, Min = min, Max = max, SD = sd))
+  ) |>
+  pivot_longer(everything(),
+               names_to = c("Variable", "Stat"),
+               names_sep = "_(?=[^_]+$)") |>
+  pivot_wider(names_from = Stat, values_from = value) |>
+  mutate(across(where(is.numeric), ~ round(.x, 1))) |>
+  kable(booktabs = TRUE)
+```
+
 \newpage
 
 # Design parameters (Assignment 8)
@@ -609,6 +626,23 @@ cat("Are there any pi_ij > 1?", any(sample_bgs$pi_ij > 1), "\n")
 cat("Workload per BG (should =", round(q_bar, 1), "):\n")
 
 summary(sample_bgs$exp_workload)
+```
+
+```{r}
+#| label: tbl-sample-descriptives
+#| tbl-cap: "Descriptive statistics for the 40 selected block groups"
+
+sample_bgs |>
+  summarise(
+    across(c(TotAdult, Age18to34, Age35to49, Age50to64, Age65plus),
+           list(Mean = mean, Min = min, Max = max, SD = sd))
+  ) |>
+  pivot_longer(everything(),
+               names_to = c("Variable", "Stat"),
+               names_sep = "_(?=[^_]+$)") |>
+  pivot_wider(names_from = Stat, values_from = value) |>
+  mutate(across(where(is.numeric), ~ round(.x, 1))) |>
+  kable(booktabs = TRUE)
 ```
 
 \newpage
@@ -909,3 +943,4 @@ write_csv(sample_listing, here("outputs", "SAMPLE_EffectSize.csv"))
 ## C. AI Disclosure
 
 This project utilized Claude (Anthropic, Opus) as an AI coding assistant. The tool was used to debug R code throughout development, including diagnosing vector recycling issues with `across()` when multiplying domain columns by the `f_d` vector, resolving `rename()` conflicts caused by duplicate column names after the PSU linking step, and troubleshooting `kable()` and `kableExtra` table formatting for PDF output such as fitting wide tables using `scale_down` and splitting listings into separate display tables. Claude also assisted with map rendering, suppressing verbose `tigris` download output during Quarto rendering and configuring `ggmap` basemap layers with `inherit.aes = FALSE` for proper `geom_sf` overlay alignment. All AI outputs were reviewed, tested, and modified by team members before inclusion.
+
