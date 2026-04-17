@@ -1,0 +1,72 @@
+---
+title: "FRAME2: Block-Group-Level Sampling Frame"
+subtitle: "Detroit Transportation Survey Sample Design"
+author: "Team Effect Size (Kevin Linares, Tavril Saint Jean)"
+date: today
+format:
+  pdf:
+    keep-tex: false
+    geometry: margin=0.6in
+    fontsize: 10pt
+    classoption: landscape
+    include-in-header:
+      text: |
+        \usepackage{booktabs}
+        \usepackage{longtable}
+        \usepackage{array}
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+pacman::p_load(tidyverse, knitr, kableExtra, here, scales)
+options(scipen = 999)
+here::i_am("inputs/Detroit_MI.xlsx")
+
+ssu_frame <- read_csv(
+  here("outputs", "FRAME_BG_EffectSize.csv"),
+  col_types = cols(Tract = col_character(),
+                   BlockGroup = col_character()),
+  show_col_types = FALSE
+)
+```
+
+This file documents the cleaned block-group-level sampling frame used for the Detroit Transportation Survey. Each row represents one secondary sampling unit (SSU), which is a census block group. For each sampled tract, one block group was selected via systematic probability-proportional-to-size with the BG-level composite measure of size `MOS_bg` driving the conditional selection probability.
+
+The frame contains `r nrow(ssu_frame)` block groups nested within `r length(unique(ssu_frame$Tract))` tracts. The `Tract` column identifies the parent PSU for each BG. Population counts come from the 2020 Decennial Census Demographic and Housing Characteristics Summary File, aggregated from the P12 sex-by-age table into the four survey age domains.
+
+\vspace{0.5em}
+
+```{r}
+#| label: tbl-bg-frame
+
+ssu_frame |>
+  arrange(Tract, BlockGroup) |>
+  select(BlockGroup, Tract, TotHH, TotAdult,
+         Age18to34, Age35to49, Age50to64, Age65plus, MOS_bg) |>
+  mutate(
+    TotHH      = format(TotHH,      big.mark = ",", trim = TRUE),
+    TotAdult   = format(TotAdult,   big.mark = ",", trim = TRUE),
+    Age18to34  = format(Age18to34,  big.mark = ",", trim = TRUE),
+    Age35to49  = format(Age35to49,  big.mark = ",", trim = TRUE),
+    Age50to64  = format(Age50to64,  big.mark = ",", trim = TRUE),
+    Age65plus  = format(Age65plus,  big.mark = ",", trim = TRUE),
+    MOS_bg     = sprintf("%.4f", MOS_bg)
+  ) |>
+  kable(
+    booktabs   = TRUE,
+    longtable  = TRUE,
+    align      = c("l", "l", rep("r", 7)),
+    col.names  = c("BlockGroup FIPS", "Tract FIPS", "TotHH", "TotAdult",
+                   "Age 18-34", "Age 35-49", "Age 50-64", "Age 65+", "MOS_bg")
+  ) |>
+  kable_styling(
+    latex_options = c("repeat_header", "striped"),
+    font_size     = 10
+  )
+```

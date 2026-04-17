@@ -1,0 +1,166 @@
+---
+title: "SAMPLE: Selected Sample Listing (40 BGs)"
+subtitle: "Detroit Transportation Survey Sample Design"
+author: "Team Effect Size (Kevin Linares, Tavril Saint Jean)"
+date: today
+format:
+  pdf:
+    keep-tex: false
+    geometry: margin=0.6in
+    fontsize: 10pt
+    classoption: landscape
+    include-in-header:
+      text: |
+        \usepackage{booktabs}
+        \usepackage{longtable}
+        \usepackage{array}
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+pacman::p_load(tidyverse, knitr, kableExtra, here, scales)
+options(scipen = 999)
+here::i_am("inputs/Detroit_MI.xlsx")
+
+sample_bgs <- read_csv(
+  here("outputs", "SAMPLE_EffectSize.csv"),
+  col_types = cols(Tract = col_character(),
+                   BlockGroup = col_character()),
+  show_col_types = FALSE
+) |>
+  arrange(Tract, BlockGroup)
+```
+
+This file lists every block group selected for the Detroit Transportation Survey. The sample contains 40 block groups, one per selected tract, drawn via systematic probability-proportional-to-size at both stages. The 21 variables on each row are grouped into four tables below for readability: census counts and composite measure of size, selection probabilities at each stage, within-BG person sampling rates by age domain, and base weights.
+
+\vspace{0.5em}
+
+# Census counts and composite MOS
+
+```{r}
+#| label: tbl-sample-counts
+
+sample_bgs |>
+  select(Tract, BlockGroup, TotAdult,
+         Age18to34, Age35to49, Age50to64, Age65plus, MOS_bg) |>
+  mutate(
+    TotAdult   = format(TotAdult,   big.mark = ",", trim = TRUE),
+    Age18to34  = format(Age18to34,  big.mark = ",", trim = TRUE),
+    Age35to49  = format(Age35to49,  big.mark = ",", trim = TRUE),
+    Age50to64  = format(Age50to64,  big.mark = ",", trim = TRUE),
+    Age65plus  = format(Age65plus,  big.mark = ",", trim = TRUE),
+    MOS_bg     = sprintf("%.4f", MOS_bg)
+  ) |>
+  kable(
+    booktabs  = TRUE,
+    longtable = TRUE,
+    align     = c("l", "l", rep("r", 6)),
+    col.names = c("Tract FIPS", "BG FIPS", "TotAdult",
+                  "Age 18-34", "Age 35-49", "Age 50-64", "Age 65+", "MOS_bg")
+  ) |>
+  kable_styling(
+    latex_options = c("repeat_header", "striped"),
+    font_size     = 10
+  )
+```
+
+\newpage
+
+# Selection probabilities
+
+The joint BG inclusion probability satisfies $\pi_{ij} = \pi_i \cdot \pi_{j|i}$. For tracts containing only one block group, $\pi_{j|i} = 1$ and the BG selection is deterministic.
+
+```{r}
+#| label: tbl-sample-probs
+
+sample_bgs |>
+  select(Tract, BlockGroup, pi_i, pij_given_i, pi_ij) |>
+  mutate(
+    pi_i        = sprintf("%.6f", pi_i),
+    pij_given_i = sprintf("%.6f", pij_given_i),
+    pi_ij       = sprintf("%.6f", pi_ij)
+  ) |>
+  kable(
+    booktabs  = TRUE,
+    longtable = TRUE,
+    align     = c("l", "l", "r", "r", "r"),
+    col.names = c("Tract FIPS", "BG FIPS",
+                  "pi_i", "pij_given_i", "pi_ij")
+  ) |>
+  kable_styling(
+    latex_options = c("repeat_header", "striped"),
+    font_size     = 10
+  )
+```
+
+\newpage
+
+# Within-BG domain sampling rates and expected workload
+
+The within-BG rate for domain $d$ is $\pi_{k|ij}(d) = \bar{q} f_d / S_{ij}$. Field teams apply these rates directly rather than rounding to integer counts. The expected workload column is the number of persons to contact in each BG, which equals $\bar{q} \approx 53.86$ by design.
+
+```{r}
+#| label: tbl-sample-rates
+
+sample_bgs |>
+  select(Tract, BlockGroup,
+         rate_Age18to34, rate_Age35to49, rate_Age50to64, rate_Age65plus,
+         exp_workload) |>
+  mutate(
+    rate_Age18to34 = sprintf("%.6f", rate_Age18to34),
+    rate_Age35to49 = sprintf("%.6f", rate_Age35to49),
+    rate_Age50to64 = sprintf("%.6f", rate_Age50to64),
+    rate_Age65plus = sprintf("%.6f", rate_Age65plus),
+    exp_workload   = sprintf("%.2f", exp_workload)
+  ) |>
+  kable(
+    booktabs  = TRUE,
+    longtable = TRUE,
+    align     = c("l", "l", rep("r", 5)),
+    col.names = c("Tract FIPS", "BG FIPS",
+                  "rate 18-34", "rate 35-49", "rate 50-64", "rate 65+",
+                  "exp workload")
+  ) |>
+  kable_styling(
+    latex_options = c("repeat_header", "striped"),
+    font_size     = 10
+  )
+```
+
+\newpage
+
+# Base weights
+
+The BG-level base weight is $d_{0,ij} = 1/\pi_{ij}$. The person-level base weight in domain $d$ is $d_0(d) = 1/f_d = N_d / n_d^{\text{select}}$, which is constant within each domain and thus identical across all 40 rows.
+
+```{r}
+#| label: tbl-sample-weights
+
+sample_bgs |>
+  select(Tract, BlockGroup, d0_bg,
+         d0_18to34, d0_35to49, d0_50to64, d0_65plus) |>
+  mutate(
+    d0_bg     = sprintf("%.2f", d0_bg),
+    d0_18to34 = sprintf("%.2f", d0_18to34),
+    d0_35to49 = sprintf("%.2f", d0_35to49),
+    d0_50to64 = sprintf("%.2f", d0_50to64),
+    d0_65plus = sprintf("%.2f", d0_65plus)
+  ) |>
+  kable(
+    booktabs  = TRUE,
+    longtable = TRUE,
+    align     = c("l", "l", rep("r", 5)),
+    col.names = c("Tract FIPS", "BG FIPS",
+                  "d0_bg", "d0 18-34", "d0 35-49", "d0 50-64", "d0 65+")
+  ) |>
+  kable_styling(
+    latex_options = c("repeat_header", "striped"),
+    font_size     = 10
+  )
+```

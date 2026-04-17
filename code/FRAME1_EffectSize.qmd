@@ -1,0 +1,71 @@
+---
+title: "FRAME1: Tract-Level Sampling Frame"
+subtitle: "Detroit Transportation Survey Sample Design"
+author: "Team Effect Size (Kevin Linares, Tavril Saint Jean)"
+date: today
+format:
+  pdf:
+    keep-tex: false
+    geometry: margin=0.6in
+    fontsize: 10pt
+    classoption: landscape
+    include-in-header:
+      text: |
+        \usepackage{booktabs}
+        \usepackage{longtable}
+        \usepackage{array}
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+pacman::p_load(tidyverse, knitr, kableExtra, here, scales)
+options(scipen = 999)
+here::i_am("inputs/Detroit_MI.xlsx")
+
+psu_frame <- read_csv(
+  here("outputs", "FRAME_PSU_EffectSize.csv"),
+  col_types = cols(Tract = col_character()),
+  show_col_types = FALSE
+)
+```
+
+This file documents the cleaned and Kish-linked tract-level sampling frame used for the Detroit Transportation Survey. Each row represents one primary sampling unit (PSU). The `n_tracts` column indicates how many original Census tracts were combined into each receiving unit (1 means not combined, greater than 1 means the receiving tract absorbed one or more undersized neighbors). The composite measure of size (MOS) and PSU inclusion probability $\pi_i$ were used to select 40 tracts via systematic probability-proportional-to-size sampling with `set.seed(-77)`.
+
+The frame contains `r nrow(psu_frame)` PSUs covering `r format(sum(psu_frame$TotAdult), big.mark = ",")` adults aged 18 and older. Source data are from the 2020 Decennial Census Demographic and Housing Characteristics Summary File, retrieved through the U.S. Census Bureau API.
+
+\vspace{0.5em}
+
+```{r}
+#| label: tbl-psu-frame
+
+psu_frame |>
+  arrange(Tract) |>
+  mutate(
+    TotHH      = format(TotHH,      big.mark = ",", trim = TRUE),
+    TotAdult   = format(TotAdult,   big.mark = ",", trim = TRUE),
+    Age18to34  = format(Age18to34,  big.mark = ",", trim = TRUE),
+    Age35to49  = format(Age35to49,  big.mark = ",", trim = TRUE),
+    Age50to64  = format(Age50to64,  big.mark = ",", trim = TRUE),
+    Age65plus  = format(Age65plus,  big.mark = ",", trim = TRUE),
+    MOS  = sprintf("%.4f", MOS),
+    pi_i = sprintf("%.6f", pi_i)
+  ) |>
+  kable(
+    booktabs   = TRUE,
+    longtable  = TRUE,
+    align      = c("l", "c", rep("r", 8)),
+    col.names  = c("Tract FIPS", "n_tracts", "TotHH", "TotAdult",
+                   "Age 18-34", "Age 35-49", "Age 50-64", "Age 65+",
+                   "MOS", "pi_i")
+  ) |>
+  kable_styling(
+    latex_options = c("repeat_header", "striped"),
+    font_size     = 10
+  )
+```
