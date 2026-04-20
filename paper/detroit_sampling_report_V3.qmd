@@ -1,5 +1,6 @@
 ---
-title: "Detroit Transportation Survey: Multi-Stage Sample Design"
+title: "Detroit Transportation Multi-stage Survey Design"
+subtitle: "Technical Report"
 author:
   - name: Kevin Linares
     corresponding: true
@@ -8,14 +9,14 @@ author:
       - name: University of Maryland
         department: Team Effect Size
   - name: Tavril Saint Jean
+    corresponding: true
     email: tsaintje@umd.edu
     affiliations:
       - name: University of Maryland
         department: Team Effect Size
 author-note:
   disclosures:
-    conflict-of-interest: The authors declare no conflicts of interest.
-date: today
+    conflict-of-interest: The authors declare no conflicts of interest. This technical report submiting on April 20, 2026.
 format:
   apaquarto-pdf:
     documentmode: man
@@ -106,17 +107,17 @@ pi_i_range  <- range(sample_bgs$pi_i)
 pi_ij_range <- range(sample_bgs$pi_ij)
 ```
 
-This report documents the design of a multi-stage area probability sample for a face-to-face survey of Detroit, Michigan residents on transportation security and use. The survey targets four outcomes: the proportion of residents living in a household without a vehicle, the proportion whose main means of transportation is public transit, the proportion who skipped a destination in the past month because of a transportation problem, and the proportion who asked for a ride from friends, family, or neighbors in the past month. Each outcome speaks to a different facet of transportation insecurity, and together they support city-level estimates with sufficient precision for policy use.
+This report documents the design of a multi-stage area probability sample for a face-to-face survey of Detroit, Michigan residents on transportation security and use. The survey targets four outcomes: the proportion of residents living in a household without a vehicle, the proportion whose main means of transportation is public transit, the proportion who skipped a destination in the past month because of a transportation problem, and the proportion who asked for a ride from friends, family, or neighbors in the past month. Each outcome captures a different facet of transportation insecurity; together they give us enough precision for cit level policy estimates.
 
-The sample uses a three-stage design in which census tracts serve as primary sampling units (PSUs), block groups as secondary sampling units (SSUs), and persons as elements. No address list or person roster exists in advance of fieldwork, so we do not execute person-level selection in this report. Instead, we describe the third stage as a field procedure: interviewers will list households in each selected block group, sample households, and choose one eligible adult per household. This is the standard approach in area probability sampling when no person-level frame is available.
+The sample uses a three-stage design in which census tracts serve as primary sampling units (PSUs), block groups as secondary sampling units (SSUs), and persons as elements. No address list or person roster exists in advance of fieldwork, so we do not execute person-level selection in this report. Instead, we describe the third stage as a field procedure: interviewers will list households in each selected block group, sample households, and choose one eligible adult per household. This is a commonly used approach in area probability sampling when no person-level frame is available.
 
-The remainder of the report walks through the design goals and frame construction, the composite measure of size and selection probabilities at each stage, a discussion of why a single uniform rate cannot meet the study's domain-level targets, anticipated precision of the key estimate, the weighting plan, guidance on variance estimation, and a map of the selected sample. The appendices hold a codebook for the exported data files, a reference to the separate sample listing deliverable, and a disclosure of AI assistance used in this project.
+The rest of the report covers the design goals and frame construction, the composite measure of size and selection probabilities at each stage, a discussion of why a single uniform rate cannot meet the study's domain-level targets, anticipated precision of the key estimate, the weighting plan, guidance on variance estimation, and a map of the selected sample. The appendices hold a codebook for the exported data files, a reference to the separate sample listing deliverable, and a disclosure of AI assistance used in this project.
 
 # Designing the Sample
 
 ## What the Design Needs to Do
 
-The design simultaneously satisfies four requirements. First, it must yield 1,000 respondents split evenly across four age domains (250 each for 18--34, 35--49, 50--64, and 65+). Second, it must be self-weighting within each domain, so that every person in a given age domain has the same overall probability of being selected and no within-domain weighting correction is required.
+The design needs to satisfy four requirements at once. First, it must yield 1,000 respondents split evenly across four age domains (250 each for 18--34, 35--49, 50--64, and 65+). Second, it must be self-weighting within each domain, so that every person in a given age domain has the same overall probability of being selected and no within-domain weighting correction is required.
 
 The remaining two requirements concern field operations. Third, the design must produce an equal interviewer workload in each sample PSU, which keeps field costs predictable and simplifies management. Fourth, it must use systematic probability-proportional-to-size (PPS) selection at both the PSU and SSU stages with a single block group drawn per tract. The composite MOS method jointly satisfies all four requirements by building domain-specific sampling rates into the size measure used for selection.
 
@@ -144,9 +145,9 @@ Before introducing the MOS formulas, we define the indices and symbols used thro
 
 The population counts are $N_i(d)$, the population of domain $d$ in PSU $i$; $Q_{ij}(d)$, the population of domain $d$ in BG $j$ of PSU $i$; and $N_d$, the total domain $d$ population across the frame. The design constants are $m = 40$, the number of sample PSUs; $\bar{n} = 1$, the number of SSUs drawn per sample PSU; $\bar{q}$, the expected number of persons to contact per sample BG; and $r_d$, the expected response rate for domain $d$. The quantity $D = 4$ is the number of age domains.
 
-The composite MOS method requires a domain sampling rate $f_d = n_d / N_d$, where $n_d$ is the desired domain sample size. The desired $n_d$ admits two conventions. Under **Approach A** (selection-based), $n_d = n_d^{\text{select}} = 250 / r_d$, the number of persons to *contact* in order to yield 250 respondents given the expected response rate. This convention folds the nonresponse inflation directly into the MOS.
+The composite MOS method requires a domain sampling rate $f_d = n_d / N_d$, where $n_d$ is the desired domain sample size. The desired $n_d$ admits two conventions. Under Approach A (selection-based), $n_d = n_d^{\text{select}} = 250 / r_d$, the number of persons to *contact* in order to yield 250 respondents given the expected response rate. This convention folds the nonresponse inflation directly into the MOS.
 
-Under **Approach B** (respondent-based), $n_d = 250$, and the nonresponse inflation is applied at the person-selection stage in the field. We adopt Approach A because it keeps all selection probabilities self-contained at the design stage; field teams apply the specified rates with no additional inflation. Under Approach A, the workload per BG is $\bar{q} = \sum_d n_d^{\text{select}} / (m \cdot \bar{n}) \approx$ `r round(q_bar, 1)` persons to contact. Table 1 shows the resulting design parameters for each domain.
+Under Approach B (respondent-based), $n_d = 250$, and the nonresponse inflation is applied at the person-selection stage in the field. We adopt Approach A because it keeps all selection probabilities self-contained at the design stage; field teams apply the specified rates with no additional inflation. Under Approach A, the workload per BG is $\bar{q} = \sum_d n_d^{\text{select}} / (m \cdot \bar{n}) \approx$ `r round(q_bar, 1)` persons to contact. Table 1 shows the resulting design parameters for each domain.
 
 ```{r}
 #| label: tbl-design-params
@@ -159,13 +160,13 @@ design_params |>
         booktabs = TRUE)
 ```
 
-The composite MOS assigns each tract a size that reflects its contribution across all four age domains rather than just its total adult count. Tracts with large populations in hard-to-reach domains receive a larger MOS because they carry more of the field work. This size-adjustment property is what allows the composite MOS to deliver self-weighting domain samples and equal PSU workload simultaneously.
+The composite MOS assigns each tract a size that reflects its contribution across all four age domains rather than just its total adult count. Tracts with large populations in hard-to-reach domains receive a larger MOS because they carry more of the field work. This size-adjustment property is what allows the composite MOS to deliver self-weighting domain samples and equal PSU workload.
 
 For PSU $i$, the composite MOS is $$S_i = \sum_{d=1}^{D} f_d \cdot N_i(d),$$ where $f_d$ is the domain sampling rate and $N_i(d)$ is the population of domain $d$ in PSU $i$. The total MOS across all PSUs equals the total target selection size: $S = \sum_i S_i = \sum_d f_d N_d =$ `r round(total_select, 2)` $\approx n^{\text{select}}$. PSU selection probabilities follow from $\pi_i = m \cdot S_i / S$.
 
 The three-stage extension adds analogous quantities at the block-group level. The BG-level composite MOS is $S_{ij} = \sum_d f_d \cdot Q_{ij}(d)$, where $Q_{ij}(d)$ is the population of domain $d$ in BG $j$ of PSU $i$. The conditional BG selection probability is $\pi_{j|i} = \bar{n} \cdot S_{ij} / S_i = S_{ij} / S_i$ since $\bar{n} = 1$. The within-BG person rate for domain $d$ is $\pi_{k|ij}(d) = \bar{q} f_d / S_{ij}$.
 
-The self-weighting property follows algebraically: $$\pi_i \cdot \pi_{j|i} \cdot \pi_{k|ij}(d) \;=\; \frac{m S_i}{S} \cdot \frac{\bar{n} S_{ij}}{S_i} \cdot \frac{\bar{q} f_d}{S_{ij}} \;=\; \frac{m \bar{n} \bar{q}}{S} f_d \;=\; f_d,$$ because $S = m \cdot \bar{n} \cdot \bar{q}$. Every person in domain $d$ therefore has the same overall selection probability $f_d$, regardless of which PSU or BG they live in. The same construction delivers constant workload: the expected number of selections in any BG is $\sum_d q^*_{ij}(d) = \bar{q}$, with $q^*_{ij}(d) = \bar{q} f_d Q_{ij}(d) / S_{ij}$.
+Multiplying the three stage probabilities gives: $$\pi_i \cdot \pi_{j|i} \cdot \pi_{k|ij}(d) \;=\; \frac{m S_i}{S} \cdot \frac{\bar{n} S_{ij}}{S_i} \cdot \frac{\bar{q} f_d}{S_{ij}} \;=\; \frac{m \bar{n} \bar{q}}{S} f_d \;=\; f_d,$$ and $S = m \cdot \bar{n} \cdot \bar{q}$. Every person in domain $d$ therefore has the same overall selection probability $f_d$, regardless of which PSU or BG they live in. Equal workflow follows from the same construction, and the expected number of selections in any BG is $\sum_d q^*_{ij}(d) = \bar{q}$, with $q^*_{ij}(d) = \bar{q} f_d Q_{ij}(d) / S_{ij}$.
 
 ### Verification
 
@@ -213,9 +214,9 @@ psu_frame |>
 
 ## Could One Rate Work for Everyone?
 
-A natural alternative to the composite MOS is to apply a single rate $f = n^{\text{select}} / N_{\text{adult}}$ to everyone regardless of age. Under this uniform rate, every person in Detroit would have the same selection probability, and field implementation would be slightly simpler. However, because the four domains carry different expected response rates (0.35 for 18--34 compared with 0.65 for 65+), a uniform rate oversamples high-responding groups and undersamples the rest.
+An alternative to the composite MOS is to apply a single rate $f = n^{\text{select}} / N_{\text{adult}}$ to everyone regardless of age. Under this uniform rate, every person in Detroit would have the same selection probability, and field implementation would be slightly simpler. However, because the four domains carry different expected response rates (0.35 for 18--34 compared with 0.65 for 65+), a uniform rate oversamples high-responding groups and undersamples the rest.
 
-Figure 2 quantifies the resulting imbalance by plotting the percentage shortfall each domain would experience at the 250-respondent target. The 35--49 domain falls about 8.5% short, while the 65+ domain overshoots by roughly 20% more respondents than needed. Table 3 gives the expected respondent counts behind those percentages, and the composite MOS avoids this imbalance by baking domain-specific rates into the design from the start.
+Figure 2 quantifies the resulting imbalance by plotting the percentage shortfall each domain would experience at the 250-respondent target. The 35--49 domain falls about 8.5% short, while the 65+ domain overshoots by roughly 20% more respondents than needed. Table 3 gives the expected respondent counts behind those percentages, and the composite MOS avoids this imbalance by built into domain-specific rates into the design from the start.
 
 ```{r}
 #| label: fig-uniform-shortfall
@@ -264,7 +265,7 @@ design_params |>
 
 We selected the sample in two stages using `UPsystematic()` from the `sampling` R package (Tillé and Matei, 2016), which implements Madow's systematic PPS method. We sorted the PSU frame by FIPS code before selection, which provides implicit geographic stratification because adjacent tracts on the sorted list tend to be neighbors. Systematic PPS selection on a FIPS-sorted frame therefore spreads the sample across the city rather than concentrating it in any single area. We fixed the seed `set.seed(-77)` at the top of the selection code for reproducibility, as specified in the project assignment.
 
-Systematic PPS carries one consequence for variance estimation. Exact joint selection probabilities $\pi_{ii'}$ are not available for arbitrary pairs of PSUs, because some pairs have $\pi_{ii'} = 0$, which rules out the Horvitz--Thompson variance estimator in its strict form. We therefore rely on the with-replacement approximation using paired analytic strata, as detailed in a later section.
+Systematic PPS has one implication for variance estimation. Exact joint selection probabilities $\pi_{ii'}$ are not available for arbitrary pairs of PSUs, because some pairs have $\pi_{ii'} = 0$, which rules out the Horvitz--Thompson variance estimator in its strict form. We therefore rely on the with-replacement approximation using paired analytic strata, as detailed in a later section.
 
 ## Tract and Block Group Selection
 
@@ -272,7 +273,8 @@ We drew $m = 40$ tracts with inclusion probabilities $\pi_i = m \cdot S_i / S$. 
 
 Within each selected tract we drew $\bar{n} = 1$ block group with probability proportional to the BG-level composite MOS, $\pi_{j|i} = S_{ij} / S_i$. For tracts that contain only one block group, the selection is deterministic and $\pi_{j|i} = 1$. In total, we selected `r nrow(sample_bgs)` block groups across the 40 sample tracts.
 
-The joint BG probability is $\pi_{ij} = \pi_i \cdot \pi_{j|i}$. Across the 40 sample block groups, $\pi_{ij}$ ranges from `r round(pi_ij_range[1], 4)` to `r round(pi_ij_range[2], 4)`, all below 1. We compute the domain-specific person rates $\pi_{k|ij}(d) = \bar{q} f_d / S_{ij}$ for each selected block group and report them in the separate sample listing deliverable, and the expected workload per BG equals `r round(q_bar, 2)` in every sample block group, which confirms the equal-workload property.
+The joint BG probability is $\pi_{ij} = \pi_i \cdot \pi_{j|i}$. Across the 40 sample block groups, $\pi_{ij}$ ranges from `r round(pi_ij_range[1], 4)` to `r round(pi_ij_range[2], 4)`, all below 1. Within-BG person rates $\pi_{k|ij}(d) = \bar{q}f_d/S_{ij}$ vary across block groups: 0.027 to 0.120 for 18--34, 0.030 to 0.133 for 35--49, 0.026 to 0.115 for 50--64, and 0.027 to 0.119 for 65+, all below 1, which confirms feasibility. The expected workload per BG equals `r round(q_bar, 2)` in every sample block group, which confirms the equal-workload property.
+
 
 ## Person Selection in the Field
 
@@ -280,7 +282,7 @@ In area probability sampling, interviewers reach persons through households. We 
 
 At each sampled household, the interviewer administers a brief screener to enumerate all persons aged 18+ and classify them into the four age domains. One eligible adult is then selected at random using a Kish grid or the next-birthday method, with the selection probability calibrated so that $\pi_{k|ij}(d) = \bar{q} f_d / S_{ij}$ for each domain $d$. The overall probability for a person in domain $d$ is $\pi_i \cdot \pi_{j|i} \cdot \pi_{k|ij}(d) = f_d$, which confirms the self-weighting property in the field.
 
-Field teams should apply the specified rates directly rather than round to fixed integer counts. The expected sample sizes at the BG level are generally not integers, and rounding breaks the self-weighting property. The cleanest implementation is to translate the rate into a "take every $1/\pi_{k|ij}(d)$th eligible person in domain $d$" rule and let the random start carry the probability.
+Field teams should apply the specified rates directly rather than round to fixed integer counts. The expected sample sizes at the BG level are generally not integers, and rounding breaks the self-weighting property. The simplest implementation is to translate the rate into a "take every $1/\pi_{k|ij}(d)$th eligible person in domain $d$" rule and let the random start carry the probability.
 
 # Expected Precision of the Key Estimate
 
@@ -318,7 +320,7 @@ expand_grid(
         legend.position = "top")
 ```
 
-For a transit-use proportion near $p = 0.20$ with $\text{deff} = 2.0$, the 95% margin of error is about $\pm$ `r round(1.96 * sqrt(2 * .20 * .80 / 1000), 3)`, which is adequate for the policy questions this survey is designed to address. Domain-level estimates, which use roughly 250 respondents each, have about double that margin of error, or approximately $\pm$ `r round(1.96 * sqrt(2 * .20 * .80 / 250), 3)`. Analysts should keep this scaling in mind when interpreting subgroup differences from the final data set.
+For a transit use proportion near $p = 0.20$ with $\text{deff} = 2.0$, the 95% margin of error is about $\pm$ `r round(1.96 * sqrt(2 * .20 * .80 / 1000), 3)`, which is adequate for the policy questions this survey is designed to address. Domain-level estimates, which use roughly 250 respondents each, have about double that margin of error, or approximately $\pm$ `r round(1.96 * sqrt(2 * .20 * .80 / 250), 3)`. Analysts should keep this scaling in mind when interpreting subgroup differences from the final data set.
 
 # Weights
 
@@ -332,7 +334,7 @@ The base weight is the inverse of the overall selection probability. At the BG l
 
 During field listing, interviewers will encounter housing units whose eligibility cannot be determined. Examples include units that look occupied but where no contact is ever made, and addresses that turn out to be vacant or demolished. We code these cases as unknown eligibility ($s_{UNK}$) rather than forcing a resolution that the data do not support.
 
-The standard approach redistributes the weight of unknowns to cases with known eligibility within adjustment classes. The adjustment is $$a_{1b} = \frac{\sum_{i \in s_b} d_{0i}}{\sum_{i \in s_{b,KN}} d_{0i}},$$ where $s_b$ is the set of sample cases in class $b$ and $s_{b,KN}$ is the subset whose eligibility is known. The adjusted weight becomes $d_{1i} = a_{1b} \cdot d_{0i}$ for cases with known eligibility and zero for the unknowns. Natural candidates for adjustment classes include tract-level Census variables such as vacancy rates and housing type.
+The standard approach redistributes the weight of unknowns to cases with known eligibility within adjustment classes. The adjustment is $$a_{1b} = \frac{\sum_{i \in s_b} d_{0i}}{\sum_{i \in s_{b,KN}} d_{0i}},$$ where $s_b$ is the set of sample cases in class $b$ and $s_{b,KN}$ is the subset whose eligibility is known. The adjusted weight becomes $d_{1i} = a_{1b} \cdot d_{0i}$ for cases with known eligibility and zero for the unknowns. Alternative candidates for adjustment classes include tract-level Census variables such as vacancy rates and housing type.
 
 ## Nonresponse Adjustment
 
@@ -342,11 +344,11 @@ The four age domains are a natural choice for adjustment classes because the exp
 
 # Estimating Standard Errors
 
-Because we select the sample in stages, formulas that assume simple random sampling understate the standard errors. Analysts should treat persons within the same tract as clustered and account for that clustering through either Taylor series linearization or replication methods. Both approaches depend on correctly identifying PSUs and analytic strata; the stratum and PSU identifiers attached to the final sample drive the variance calculation in `survey` and similar packages.
+Given thtat we select the sample in stages, formulas that assume simple random sampling understate the standard errors. Analysts should treat persons within the same tract as clustered and account for that clustering through either Taylor series linearization or replication methods. Both approaches depend on correctly identifying PSUs and analytic strata; the stratum and PSU identifiers attached to the final sample drive the variance calculation in `survey` and similar packages.
 
 ## Taylor series linearization
 
-Because systematic PPS does not deliver exact joint selection probabilities, we form **paired analytic strata** by grouping adjacent sample PSUs in the FIPS-sorted selection order. With $m = 40$ sample PSUs, this yields 20 strata of 2 PSUs each. The pairing preserves the implicit geographic stratification introduced by the FIPS sort.
+Since systematic PPS does not deliver exact joint selection probabilities, we form paired analytic strata by grouping adjacent sample PSUs in the FIPS-sorted selection order. With $m = 40$ sample PSUs, this yields 20 strata of 2 PSUs each. The pairing preserves the implicit geographic stratification introduced by the FIPS sort.
 
 Within this setup, `survey::svydesign()` applies the ultimate cluster variance estimator and computes standard errors via Taylor series linearization. The function treats each sample PSU as a cluster and captures all within-PSU variability from the SSU and person stages through the between-PSU variation. An analyst would construct the design object as follows after data collection:
 
@@ -355,15 +357,16 @@ Within this setup, `survey::svydesign()` applies the ultimate cluster variance e
 #| eval: false
 
 detroit_design <- svydesign(
-  id      = ~ psu_id,
-  strata  = ~ analytic_stratum,
+  id = ~ psu_id,
+  strata = ~ analytic_stratum,
   weights = ~ final_weight,
-  data    = survey_data,
-  nest    = TRUE)
+  data = survey_data,
+  nest= TRUE)
 
 svymean(~ I(transit == "public"), design = detroit_design)
+
 svyby(~ I(transit == "public"), ~ age_domain,
-      design = detroit_design, svymean)
+      design = detroit_design, FUN = svymean)
 ```
 
 The `id` argument identifies PSUs (tracts), `strata` identifies the paired analytic strata, and `weights` holds the final nonresponse-adjusted weight. Setting `nest = TRUE` tells `svydesign()` that PSU identifiers restart within each stratum, which is the case in this design. Analysts should confirm that the stratum and PSU identifiers are formatted consistently before any variance calculation.
@@ -382,7 +385,7 @@ svymean(~ I(transit == "public"), design = detroit_jk)
 
 # Where the Sample Lands
 
-Figures 4 and 5 together show the City of Detroit frame and the selected sample. Figure 4 shows all `r n_psu_final` tracts and `r n_bg_final` block groups on the cleaned frame, with tract boundaries in solid lines and block-group boundaries dotted. Figure 5 overlays the selected sample on the same basemap: the 40 sample tracts appear in blue fill, and the 40 selected block groups are outlined in red. The spread of selected tracts across the city reflects the implicit geographic stratification produced by systematic PPS selection on the FIPS-sorted frame.
+Figures 4 and 5 show the City of Detroit frame and the selected sample. Figure 4 shows all `r n_psu_final` tracts and `r n_bg_final` block groups on the cleaned frame, with tract boundaries in solid lines and block-group boundaries dotted. Figure 5 overlays the selected sample on the same basemap: the 40 sample tracts appear in blue fill, and the 40 selected block groups are outlined in red. The spread of selected tracts across the city reflects the implicit geographic stratification produced by systematic PPS selection on the FIPS-sorted frame.
 
 ```{r}
 #| label: fig-frame-map
