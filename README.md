@@ -1,6 +1,6 @@
 # detroit-transit-by-design
 
-**Team Effect Size** | SURV745 — Practical Tools for Survey Design | Due 4/20/2026
+**Team Effect Size** | SURV745 — Practical Tools for Survey Design | 
 
 ![](images/clipboard-3499325007.png)
 
@@ -38,3 +38,5 @@ report/            REPORT_EffectSize.qmd
 - Domain response rates: 0.35, 0.45, 0.50, 0.65 (18–34 through 65+)
 - PPS systematic selection (`UPsystematic`, `set.seed(-77)`)
 - 2020 Decennial DHC via `tidycensus`
+
+# Please read this project's [manuscript](https://klinares.github.io/eight-mile-sample/manuscript/report_effect_size.html) along with [documentation](https://klinares.github.io/eight-mile-sample/code/detroit_sampling_code.html) and a [cheatsheet](https://klinares.github.io/eight-mile-sample/code/detroit_cheatsheet.html) for equation parameters used in this proposed analysis.
