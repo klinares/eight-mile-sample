@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Kevin Linares">
+<meta name="author" content="Tavril Saint Jean">
+
+<title>Detroit Transportation Multi-stage Survey Design</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="report_effect_size_files/libs/clipboard/clipboard.min.js"></script>
+<script src="report_effect_size_files/libs/quarto-html/quarto.js"></script>
+<script src="report_effect_size_files/libs/quarto-html/popper.min.js"></script>
+<script src="report_effect_size_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="report_effect_size_files/libs/quarto-html/anchor.min.js"></script>
+<link href="report_effect_size_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="report_effect_size_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="report_effect_size_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="report_effect_size_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="report_effect_size_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="report_effect_size_files/libs/kePrint-0.0.1/kePrint.js"></script>
+
+<link href="report_effect_size_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Detroit Transportation Multi-stage Survey Design</h1>
+<p class="subtitle lead">Technical Report</p>
+</div>
+
+
+<div class="quarto-title-meta-author">
+  <div class="quarto-title-meta-heading">Authors</div>
+  <div class="quarto-title-meta-heading">Affiliation</div>
+  
+    <div class="quarto-title-meta-contents">
+    <p class="author">Kevin Linares <a href="mailto:klinares@umd.edu" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> </p>
+  </div>
+  <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            University of Maryland
+          </p>
+      </div>
+    <div class="quarto-title-meta-contents">
+    <p class="author">Tavril Saint Jean <a href="mailto:tsaintje@umd.edu" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> </p>
+  </div>
+  <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            University of Maryland
+          </p>
+      </div>
+  </div>
+
+<div class="quarto-title-meta">
+
+      
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This report documents the design of a multi-stage area probability sample for a face-to-face survey of Detroit, Michigan residents on transportation security and use. The survey targets four outcomes: the proportion of residents living in a household without a vehicle, the proportion whose main means of transportation is public transit, the proportion who skipped a destination in the past month because of a transportation problem, and the proportion who asked for a ride from friends, family, or neighbors in the past month. Each outcome captures a different facet of transportation insecurity; together they give us enough precision for cit level policy estimates.</p>
+<p>The sample uses a three-stage design in which census tracts serve as primary sampling units (PSUs), block groups as secondary sampling units (SSUs), and persons as elements. No address list or person roster exists in advance of fieldwork, so we do not execute person-level selection in this report. Instead, we describe the third stage as a field procedure: interviewers will list households in each selected block group, sample households, and choose one eligible adult per household. This is a commonly used approach in area probability sampling when no person-level frame is available.</p>
+<p>The rest of the report covers the design goals and frame construction, the composite measure of size and selection probabilities at each stage, a discussion of why a single uniform rate cannot meet the study’s domain-level targets, anticipated precision of the key estimate, the weighting plan, guidance on variance estimation, and a map of the selected sample. The appendices hold a codebook for the exported data files, a reference to the separate sample listing deliverable, and a disclosure of AI assistance used in this project.</p>
+<section id="designing-the-sample" class="level1">
+<h1>Designing the Sample</h1>
+<section id="what-the-design-needs-to-do" class="level2">
+<h2 class="anchored" data-anchor-id="what-the-design-needs-to-do">What the Design Needs to Do</h2>
+<p>The design needs to satisfy four requirements at once. First, it must yield 1,000 respondents split evenly across four age domains (250 each for 18–34, 35–49, 50–64, and 65+). Second, it must be self-weighting within each domain, so that every person in a given age domain has the same overall probability of being selected and no within-domain weighting correction is required.</p>
+<p>The remaining two requirements concern field operations. Third, the design must produce an equal interviewer workload in each sample PSU, which keeps field costs predictable and simplifies management. Fourth, it must use systematic probability-proportional-to-size (PPS) selection at both the PSU and SSU stages with a single block group drawn per tract. The composite MOS method jointly satisfies all four requirements by building domain-specific sampling rates into the size measure used for selection.</p>
+<p>Selecting one adult per household, rather than all eligible adults, is also a substantive choice. Vehicle ownership, transit use, and most of the other key outcomes are properties of the household, so responses from two adults in the same household would be highly correlated. Taking one adult per household avoids inflating the design effect that the within-household correlation would otherwise produce.</p>
+</section>
+<section id="who-we-are-sampling" class="level2">
+<h2 class="anchored" data-anchor-id="who-we-are-sampling">Who We Are Sampling</h2>
+<p>The target population consists of non-institutionalized adults aged 18 and older who reside in the City of Detroit, Michigan. Based on 2020 Decennial Census Demographic and Housing Characteristics (DHC) Summary File data, the cleaned and linked frame covers 480,131 adults across 265 eligible census tracts and 612 block groups. These counts reflect the state of the frame after we dropped zero-population areas and combined undersized tracts with neighboring units, as described in the next section.</p>
+</section>
+<section id="building-the-frame" class="level2">
+<h2 class="anchored" data-anchor-id="building-the-frame">Building the Frame</h2>
+<p>The sampling frame draws on 2020 DHC Summary File data retrieved through the U.S. Census Bureau API for Wayne County, Michigan, and restricted to the 280 census tracts that make up the City of Detroit. The data include housing-unit counts, total person counts, and person counts by sex and age (P12 table) at both the tract and block-group levels. We construct the frame at the block-group level first, collapsing the 49 sex-by-age columns into the four survey age domains using regex pattern matching, and then aggregate block-group totals to the tract level.</p>
+<p>We deliberately derive tract counts from block-group aggregation rather than reading tract counts directly. The 2020 Census applies differential privacy noise independently at each geographic level, so tract-level totals do not exactly equal the sum of their constituent block-group totals in the source data. Deriving tract counts from block groups guarantees <span class="math inline">\(S_i = \sum_j S_{ij}\)</span> at every downstream step, which is required for the conditional BG selection probabilities to sum correctly.</p>
+<section id="cleaning-and-linking-the-frame" class="level3">
+<h3 class="anchored" data-anchor-id="cleaning-and-linking-the-frame">Cleaning and linking the frame</h3>
+<p>We apply three cleaning steps before sample selection. First, tract 26163985500 (tract 9855) appears as a duplicated, zero-population record in the tract data, and we drop it at ingestion. Second, we remove tracts and block groups with zero adult population; these are water, industrial, or institutional areas that contribute no eligible persons.</p>
+<p>Third, we verify that every remaining block group supports the required workload through a feasibility check: the within-BG sampling rate must satisfy <span class="math inline">\(\pi_{k|ij}(d) \leq 1\)</span> for every domain. Tracts in which all block groups fail this check are combined with their nearest geographic neighbor on the FIPS-sorted frame, following the linking procedure of Kish (1965). A small number of violating block groups remain inside otherwise large tracts, but their MOS values are so close to zero that the chance of any of them being drawn by PPS is negligible; we would apply Kish linking in the field if one were drawn. After these three steps, the frame contains 265 PSUs and 612 SSUs.</p>
+</section>
+</section>
+<section id="sizing-the-tracts-and-block-groups" class="level2">
+<h2 class="anchored" data-anchor-id="sizing-the-tracts-and-block-groups">Sizing the Tracts and Block Groups</h2>
+<p>Before introducing the MOS formulas, we define the indices and symbols used throughout the rest of the report. The index <span class="math inline">\(i\)</span> ranges over PSUs (census tracts) and <span class="math inline">\(j\)</span> ranges over SSUs (block groups) within a PSU. The index <span class="math inline">\(d\)</span> ranges over the four age domains and takes values <span class="math inline">\(1, 2, 3, 4\)</span> corresponding to 18–34, 35–49, 50–64, and 65+, while the index <span class="math inline">\(k\)</span> ranges over persons within a selected SSU.</p>
+<p>The population counts are <span class="math inline">\(N_i(d)\)</span>, the population of domain <span class="math inline">\(d\)</span> in PSU <span class="math inline">\(i\)</span>; <span class="math inline">\(Q_{ij}(d)\)</span>, the population of domain <span class="math inline">\(d\)</span> in BG <span class="math inline">\(j\)</span> of PSU <span class="math inline">\(i\)</span>; and <span class="math inline">\(N_d\)</span>, the total domain <span class="math inline">\(d\)</span> population across the frame. The design constants are <span class="math inline">\(m = 40\)</span>, the number of sample PSUs; <span class="math inline">\(\bar{n} = 1\)</span>, the number of SSUs drawn per sample PSU; <span class="math inline">\(\bar{q}\)</span>, the expected number of persons to contact per sample BG; and <span class="math inline">\(r_d\)</span>, the expected response rate for domain <span class="math inline">\(d\)</span>. The quantity <span class="math inline">\(D = 4\)</span> is the number of age domains.</p>
+<p>The composite MOS method requires a domain sampling rate <span class="math inline">\(f_d = n_d / N_d\)</span>, where <span class="math inline">\(n_d\)</span> is the desired domain sample size. The desired <span class="math inline">\(n_d\)</span> admits two conventions. Under Approach A (selection-based), <span class="math inline">\(n_d = n_d^{\text{select}} = 250 / r_d\)</span>, the number of persons to <em>contact</em> in order to yield 250 respondents given the expected response rate. This convention folds the nonresponse inflation directly into the MOS.</p>
+<p>Under Approach B (respondent-based), <span class="math inline">\(n_d = 250\)</span>, and the nonresponse inflation is applied at the person-selection stage in the field. We adopt Approach A because it keeps all selection probabilities self-contained at the design stage; field teams apply the specified rates with no additional inflation. Under Approach A, the workload per BG is <span class="math inline">\(\bar{q} = \sum_d n_d^{\text{select}} / (m \cdot \bar{n}) \approx\)</span> 53.9 persons to contact. Table 1 shows the resulting design parameters for each domain.</p>
+<div class="cell">
+<div id="tbl-design-params" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-design-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Design parameters under Approach A (selection-based)
+</figcaption>
+<div aria-describedby="tbl-design-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Domain</th>
+<th style="text-align: right;">n (respond)</th>
+<th style="text-align: right;">Response Rate</th>
+<th style="text-align: right;">N_d</th>
+<th style="text-align: right;">n (select)</th>
+<th style="text-align: right;">f_d</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">18-34</td>
+<td style="text-align: right;">250</td>
+<td style="text-align: right;">0.35</td>
+<td style="text-align: right;">161357</td>
+<td style="text-align: right;">714.2857</td>
+<td style="text-align: right;">0.004427</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">35-49</td>
+<td style="text-align: right;">250</td>
+<td style="text-align: right;">0.45</td>
+<td style="text-align: right;">113272</td>
+<td style="text-align: right;">555.5556</td>
+<td style="text-align: right;">0.004905</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">50-64</td>
+<td style="text-align: right;">250</td>
+<td style="text-align: right;">0.50</td>
+<td style="text-align: right;">117763</td>
+<td style="text-align: right;">500.0000</td>
+<td style="text-align: right;">0.004246</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">65+</td>
+<td style="text-align: right;">250</td>
+<td style="text-align: right;">0.65</td>
+<td style="text-align: right;">87739</td>
+<td style="text-align: right;">384.6154</td>
+<td style="text-align: right;">0.004384</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>The composite MOS assigns each tract a size that reflects its contribution across all four age domains rather than just its total adult count. Tracts with large populations in hard-to-reach domains receive a larger MOS because they carry more of the field work. This size-adjustment property is what allows the composite MOS to deliver self-weighting domain samples and equal PSU workload.</p>
+<p>For PSU <span class="math inline">\(i\)</span>, the composite MOS is <span class="math display">\[S_i = \sum_{d=1}^{D} f_d \cdot N_i(d),\]</span> where <span class="math inline">\(f_d\)</span> is the domain sampling rate and <span class="math inline">\(N_i(d)\)</span> is the population of domain <span class="math inline">\(d\)</span> in PSU <span class="math inline">\(i\)</span>. The total MOS across all PSUs equals the total target selection size: <span class="math inline">\(S = \sum_i S_i = \sum_d f_d N_d =\)</span> 2154.46 <span class="math inline">\(\approx n^{\text{select}}\)</span>. PSU selection probabilities follow from <span class="math inline">\(\pi_i = m \cdot S_i / S\)</span>.</p>
+<p>The three-stage extension adds analogous quantities at the block-group level. The BG-level composite MOS is <span class="math inline">\(S_{ij} = \sum_d f_d \cdot Q_{ij}(d)\)</span>, where <span class="math inline">\(Q_{ij}(d)\)</span> is the population of domain <span class="math inline">\(d\)</span> in BG <span class="math inline">\(j\)</span> of PSU <span class="math inline">\(i\)</span>. The conditional BG selection probability is <span class="math inline">\(\pi_{j|i} = \bar{n} \cdot S_{ij} / S_i = S_{ij} / S_i\)</span> since <span class="math inline">\(\bar{n} = 1\)</span>. The within-BG person rate for domain <span class="math inline">\(d\)</span> is <span class="math inline">\(\pi_{k|ij}(d) = \bar{q} f_d / S_{ij}\)</span>.</p>
+<p>Multiplying the three stage probabilities gives: <span class="math display">\[\pi_i \cdot \pi_{j|i} \cdot \pi_{k|ij}(d) \;=\; \frac{m S_i}{S} \cdot \frac{\bar{n} S_{ij}}{S_i} \cdot \frac{\bar{q} f_d}{S_{ij}} \;=\; \frac{m \bar{n} \bar{q}}{S} f_d \;=\; f_d,\]</span> and <span class="math inline">\(S = m \cdot \bar{n} \cdot \bar{q}\)</span>. Every person in domain <span class="math inline">\(d\)</span> therefore has the same overall selection probability <span class="math inline">\(f_d\)</span>, regardless of which PSU or BG they live in. Equal workflow follows from the same construction, and the expected number of selections in any BG is <span class="math inline">\(\sum_d q^*_{ij}(d) = \bar{q}\)</span>, with <span class="math inline">\(q^*_{ij}(d) = \bar{q} f_d Q_{ij}(d) / S_{ij}\)</span>.</p>
+<section id="verification" class="level3">
+<h3 class="anchored" data-anchor-id="verification">Verification</h3>
+<p>We verified four properties of the design at the PSU level. All within-PSU rates lie below 1, which confirms feasibility; the expected domain sample sizes match the composite-MOS formula; the expected workload equals 53.86 in every PSU; and <span class="math inline">\(\pi_i \cdot \pi_{k|i}(d) = f_d\)</span> holds for every PSU and domain combination. All four checks pass, and the underlying arithmetic is reproducible from the code accompanying this report.</p>
+</section>
+</section>
+<section id="what-the-frame-looks-like" class="level2">
+<h2 class="anchored" data-anchor-id="what-the-frame-looks-like">What the Frame Looks Like</h2>
+<p>Figure 1 shows the distribution of adult population across the 265 tracts in the cleaned frame, and Table 2 reports descriptive statistics for the frame variables that feed into MOS computation. The 265 tracts vary considerably in size, which motivates PPS selection: sampling with equal probability would oversample small tracts and undersample large ones. Domain populations across the frame are 161,357 adults 18–34, 113,272 adults 35–49, 117,763 adults 50–64, and 87,739 adults 65+.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-psu-density" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-pos="H">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-psu-density-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="report_effect_size_files/figure-html/fig-psu-density-1.png" class="img-fluid figure-img" data-fig-pos="H" width="576">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-psu-density-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Distribution of adult population across the Detroit PSU frame. The dashed line marks the mean.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div id="tbl-frame-descriptives" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-frame-descriptives-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2: Descriptive statistics for the PSU sampling frame
+</figcaption>
+<div aria-describedby="tbl-frame-descriptives-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Variable</th>
+<th style="text-align: right;">Mean</th>
+<th style="text-align: right;">Min</th>
+<th style="text-align: right;">Max</th>
+<th style="text-align: right;">SD</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">TotHH</td>
+<td style="text-align: right;">1169.5</td>
+<td style="text-align: right;">140</td>
+<td style="text-align: right;">3906</td>
+<td style="text-align: right;">468.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TotAdult</td>
+<td style="text-align: right;">1811.8</td>
+<td style="text-align: right;">164</td>
+<td style="text-align: right;">4417</td>
+<td style="text-align: right;">760.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Age18to34</td>
+<td style="text-align: right;">608.9</td>
+<td style="text-align: right;">94</td>
+<td style="text-align: right;">3241</td>
+<td style="text-align: right;">331.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Age35to49</td>
+<td style="text-align: right;">427.4</td>
+<td style="text-align: right;">35</td>
+<td style="text-align: right;">1084</td>
+<td style="text-align: right;">189.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Age50to64</td>
+<td style="text-align: right;">444.4</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">1168</td>
+<td style="text-align: right;">182.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Age65plus</td>
+<td style="text-align: right;">331.1</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">1623</td>
+<td style="text-align: right;">193.7</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+</section>
+<section id="could-one-rate-work-for-everyone" class="level2">
+<h2 class="anchored" data-anchor-id="could-one-rate-work-for-everyone">Could One Rate Work for Everyone?</h2>
+<p>An alternative to the composite MOS is to apply a single rate <span class="math inline">\(f = n^{\text{select}} / N_{\text{adult}}\)</span> to everyone regardless of age. Under this uniform rate, every person in Detroit would have the same selection probability, and field implementation would be slightly simpler. However, because the four domains carry different expected response rates (0.35 for 18–34 compared with 0.65 for 65+), a uniform rate oversamples high-responding groups and undersamples the rest.</p>
+<p>Figure 2 quantifies the resulting imbalance by plotting the percentage shortfall each domain would experience at the 250-respondent target. The 35–49 domain falls about 8.5% short, while the 65+ domain overshoots by roughly 20% more respondents than needed. Table 3 gives the expected respondent counts behind those percentages, and the composite MOS avoids this imbalance by built into domain-specific rates into the design from the start.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-uniform-shortfall" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-pos="H">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-uniform-shortfall-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="report_effect_size_files/figure-html/fig-uniform-shortfall-1.png" class="img-fluid figure-img" data-fig-pos="H" width="576">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-uniform-shortfall-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Shortfall in expected respondents under a uniform sampling rate. Positive values indicate domains that fall below the 250-respondent target; negative values indicate surplus respondents.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div id="tbl-uniform-rate" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-uniform-rate-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;3: Expected respondents under a uniform sampling rate
+</figcaption>
+<div aria-describedby="tbl-uniform-rate-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Domain</th>
+<th style="text-align: right;">N_d</th>
+<th style="text-align: right;">Expected Respondents</th>
+<th style="text-align: right;">Shortfall (%)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">18-34</td>
+<td style="text-align: right;">161357</td>
+<td style="text-align: right;">253.4</td>
+<td style="text-align: right;">-1.4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">35-49</td>
+<td style="text-align: right;">113272</td>
+<td style="text-align: right;">228.7</td>
+<td style="text-align: right;">8.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">50-64</td>
+<td style="text-align: right;">117763</td>
+<td style="text-align: right;">264.2</td>
+<td style="text-align: right;">-5.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">65+</td>
+<td style="text-align: right;">87739</td>
+<td style="text-align: right;">255.9</td>
+<td style="text-align: right;">-2.4</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+</section>
+</section>
+<section id="drawing-the-sample" class="level1">
+<h1>Drawing the Sample</h1>
+<section id="how-the-draw-works" class="level2">
+<h2 class="anchored" data-anchor-id="how-the-draw-works">How the Draw Works</h2>
+<p>We selected the sample in two stages using <code>UPsystematic()</code> from the <code>sampling</code> R package (Tillé and Matei, 2016), which implements Madow’s systematic PPS method. We sorted the PSU frame by FIPS code before selection, which provides implicit geographic stratification because adjacent tracts on the sorted list tend to be neighbors. Systematic PPS selection on a FIPS-sorted frame therefore spreads the sample across the city rather than concentrating it in any single area. We fixed the seed <code>set.seed(-77)</code> at the top of the selection code for reproducibility, as specified in the project assignment.</p>
+<p>Systematic PPS has one implication for variance estimation. Exact joint selection probabilities <span class="math inline">\(\pi_{ii'}\)</span> are not available for arbitrary pairs of PSUs, because some pairs have <span class="math inline">\(\pi_{ii'} = 0\)</span>, which rules out the Horvitz–Thompson variance estimator in its strict form. We therefore rely on the with-replacement approximation using paired analytic strata, as detailed in a later section.</p>
+</section>
+<section id="tract-and-block-group-selection" class="level2">
+<h2 class="anchored" data-anchor-id="tract-and-block-group-selection">Tract and Block Group Selection</h2>
+<p>We drew <span class="math inline">\(m = 40\)</span> tracts with inclusion probabilities <span class="math inline">\(\pi_i = m \cdot S_i / S\)</span>. In the realized sample, the PSU selection probabilities range from 0.0377 to 0.3629, and none exceeds 1. The spread of <span class="math inline">\(\pi_i\)</span> reflects the underlying heterogeneity in tract-level MOS values, which in turn tracks the domain-weighted population across tracts.</p>
+<p>Within each selected tract we drew <span class="math inline">\(\bar{n} = 1\)</span> block group with probability proportional to the BG-level composite MOS, <span class="math inline">\(\pi_{j|i} = S_{ij} / S_i\)</span>. For tracts that contain only one block group, the selection is deterministic and <span class="math inline">\(\pi_{j|i} = 1\)</span>. In total, we selected 40 block groups across the 40 sample tracts.</p>
+<p>The joint BG probability is <span class="math inline">\(\pi_{ij} = \pi_i \cdot \pi_{j|i}\)</span>. Across the 40 sample block groups, <span class="math inline">\(\pi_{ij}\)</span> ranges from 0.0368 to 0.1652, all below 1. Within-BG person rates <span class="math inline">\(\pi_{k|ij}(d) = \bar{q}f_d/S_{ij}\)</span> vary across block groups: 0.027 to 0.120 for 18–34, 0.030 to 0.133 for 35–49, 0.026 to 0.115 for 50–64, and 0.027 to 0.119 for 65+, all below 1, which confirms feasibility. The expected workload per BG equals 53.86 in every sample block group, which confirms the equal-workload property.</p>
+</section>
+<section id="person-selection-in-the-field" class="level2">
+<h2 class="anchored" data-anchor-id="person-selection-in-the-field">Person Selection in the Field</h2>
+<p>In area probability sampling, interviewers reach persons through households. We do not execute this stage in the report because no address list yet exists, but the procedure for field teams is as follows. Interviewers first compile a complete listing of all occupied housing units in the selected block group using Census address data and on-the-ground observation. They then sample households systematically at a rate that, combined with <span class="math inline">\(\pi_{ij}\)</span>, yields the desired person-level rates; with about 1.55 eligible adults per household in Detroit, the household rate is adjusted accordingly.</p>
+<p>At each sampled household, the interviewer administers a brief screener to enumerate all persons aged 18+ and classify them into the four age domains. One eligible adult is then selected at random using a Kish grid or the next-birthday method, with the selection probability calibrated so that <span class="math inline">\(\pi_{k|ij}(d) = \bar{q} f_d / S_{ij}\)</span> for each domain <span class="math inline">\(d\)</span>. The overall probability for a person in domain <span class="math inline">\(d\)</span> is <span class="math inline">\(\pi_i \cdot \pi_{j|i} \cdot \pi_{k|ij}(d) = f_d\)</span>, which confirms the self-weighting property in the field.</p>
+<p>Field teams should apply the specified rates directly rather than round to fixed integer counts. The expected sample sizes at the BG level are generally not integers, and rounding breaks the self-weighting property. The simplest implementation is to translate the rate into a “take every <span class="math inline">\(1/\pi_{k|ij}(d)\)</span>th eligible person in domain <span class="math inline">\(d\)</span>” rule and let the random start carry the probability.</p>
+</section>
+</section>
+<section id="expected-precision-of-the-key-estimate" class="level1">
+<h1>Expected Precision of the Key Estimate</h1>
+<p>The key outcome for precision calculations is the proportion of Detroit residents whose main means of transportation is public transit. Precision in a clustered design depends on the design effect, which captures the variance inflation caused by within-cluster correlation. For a two-stage cluster sample, the approximate design effect is <span class="math display">\[\text{deff} \approx 1 + (\bar{b} - 1)\delta,\]</span> where <span class="math inline">\(\bar{b}\)</span> is the average number of respondents per PSU (about 25 in this design given <span class="math inline">\(n = 1{,}000\)</span> and <span class="math inline">\(m = 40\)</span>) and <span class="math inline">\(\delta\)</span> is the intraclass correlation coefficient within tracts.</p>
+<p>For demographic and behavioral variables in U.S. urban populations, <span class="math inline">\(\delta\)</span> typically falls between 0.01 and 0.05, which yields design effects in the range of 1.2 to 2.2. The variance of an estimated proportion under the cluster design is approximately <span class="math inline">\(\text{Var}(\hat{p}) \approx \text{deff} \cdot p(1-p)/n\)</span>, where <span class="math inline">\(\hat{p}\)</span> is the sample proportion, <span class="math inline">\(p\)</span> is the true population proportion, and <span class="math inline">\(n\)</span> is the total number of respondents. Figure 3 traces the 95% margin of error as a continuous function of <span class="math inline">\(p\)</span> for three plausible design effects at <span class="math inline">\(n = 1{,}000\)</span>.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-precision" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-pos="H">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-precision-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="report_effect_size_files/figure-html/fig-precision-1.png" class="img-fluid figure-img" data-fig-pos="H" width="576">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-precision-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: 95% margin of error as a function of the true proportion, under three design effects, at n = 1,000 total respondents. Vertical dotted line marks the transit-use benchmark of p = 0.20.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>For a transit use proportion near <span class="math inline">\(p = 0.20\)</span> with <span class="math inline">\(\text{deff} = 2.0\)</span>, the 95% margin of error is about <span class="math inline">\(\pm\)</span> 0.035, which is adequate for the policy questions this survey is designed to address. Domain-level estimates, which use roughly 250 respondents each, have about double that margin of error, or approximately <span class="math inline">\(\pm\)</span> 0.07. Analysts should keep this scaling in mind when interpreting subgroup differences from the final data set.</p>
+</section>
+<section id="weights" class="level1">
+<h1>Weights</h1>
+<p>Survey weights are values attached to each respondent that let estimates from the sample represent the full Detroit adult population. The weighting plan proceeds in three steps: we compute a base weight from the selection probability, adjust for cases with unknown eligibility, and apply a nonresponse adjustment. After these three adjustments, the weighted sample supports population-level estimates for Detroit adults and for each of the four age domains.</p>
+<section id="base-weights" class="level2">
+<h2 class="anchored" data-anchor-id="base-weights">Base Weights</h2>
+<p>The base weight is the inverse of the overall selection probability. At the BG level, the joint probability is <span class="math inline">\(\pi_{ij} = \pi_i \cdot \pi_{j|i}\)</span>, so the BG-level base weight is <span class="math display">\[d_{0,ij} = \frac{1}{\pi_i \cdot \pi_{j|i}}.\]</span> Under the three-stage self-weighting design, the person-level probability in domain <span class="math inline">\(d\)</span> is <span class="math inline">\(\pi_k(d) = f_d\)</span>, which gives a person-level base weight of <span class="math inline">\(d_0(d) = 1/f_d = N_d / n_d^{\text{select}}\)</span> that is constant within each domain. As a quality check, the sum of base weights across the expected sample in each domain should reproduce the domain population total <span class="math inline">\(N_d\)</span>.</p>
+</section>
+<section id="unknown-eligibility-adjustment" class="level2">
+<h2 class="anchored" data-anchor-id="unknown-eligibility-adjustment">Unknown Eligibility Adjustment</h2>
+<p>During field listing, interviewers will encounter housing units whose eligibility cannot be determined. Examples include units that look occupied but where no contact is ever made, and addresses that turn out to be vacant or demolished. We code these cases as unknown eligibility (<span class="math inline">\(s_{UNK}\)</span>) rather than forcing a resolution that the data do not support.</p>
+<p>The standard approach redistributes the weight of unknowns to cases with known eligibility within adjustment classes. The adjustment is <span class="math display">\[a_{1b} = \frac{\sum_{i \in s_b} d_{0i}}{\sum_{i \in s_{b,KN}} d_{0i}},\]</span> where <span class="math inline">\(s_b\)</span> is the set of sample cases in class <span class="math inline">\(b\)</span> and <span class="math inline">\(s_{b,KN}\)</span> is the subset whose eligibility is known. The adjusted weight becomes <span class="math inline">\(d_{1i} = a_{1b} \cdot d_{0i}\)</span> for cases with known eligibility and zero for the unknowns. Alternative candidates for adjustment classes include tract-level Census variables such as vacancy rates and housing type.</p>
+</section>
+<section id="nonresponse-adjustment" class="level2">
+<h2 class="anchored" data-anchor-id="nonresponse-adjustment">Nonresponse Adjustment</h2>
+<p>Among cases known to be eligible, some will decline to take the survey. We apply a weighting-class nonresponse adjustment within class <span class="math inline">\(c\)</span>, <span class="math display">\[a_{2c} = \frac{\sum_{i \in s_{c,E}} d_{1i}}{\sum_{i \in s_{c,ER}} d_{1i}},\]</span> where <span class="math inline">\(s_{c,E}\)</span> is the set of eligible cases in class <span class="math inline">\(c\)</span> and <span class="math inline">\(s_{c,ER}\)</span> is the subset of eligible respondents.</p>
+<p>The four age domains are a natural choice for adjustment classes because the expected response rates already differ by domain, from 0.35 for 18–34 up to 0.65 for 65+. If response propensity is roughly constant within a domain, the adjustment simplifies to <span class="math inline">\(a_{2c} \approx 1/r_d\)</span>, where <span class="math inline">\(r_d\)</span> is the domain-level response rate. The final weight attached to each respondent is <span class="math inline">\(d_{2i} = a_{2c} \cdot d_{1i}\)</span>, and analysts should use this weight in all design-based estimation.</p>
+</section>
+</section>
+<section id="estimating-standard-errors" class="level1">
+<h1>Estimating Standard Errors</h1>
+<p>Given thtat we select the sample in stages, formulas that assume simple random sampling understate the standard errors. Analysts should treat persons within the same tract as clustered and account for that clustering through either Taylor series linearization or replication methods. Both approaches depend on correctly identifying PSUs and analytic strata; the stratum and PSU identifiers attached to the final sample drive the variance calculation in <code>survey</code> and similar packages.</p>
+<section id="taylor-series-linearization" class="level2">
+<h2 class="anchored" data-anchor-id="taylor-series-linearization">Taylor series linearization</h2>
+<p>Since systematic PPS does not deliver exact joint selection probabilities, we form paired analytic strata by grouping adjacent sample PSUs in the FIPS-sorted selection order. With <span class="math inline">\(m = 40\)</span> sample PSUs, this yields 20 strata of 2 PSUs each. The pairing preserves the implicit geographic stratification introduced by the FIPS sort.</p>
+<p>Within this setup, <code>survey::svydesign()</code> applies the ultimate cluster variance estimator and computes standard errors via Taylor series linearization. The function treats each sample PSU as a cluster and captures all within-PSU variability from the SSU and person stages through the between-PSU variation. An analyst would construct the design object as follows after data collection:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>detroit_design <span class="ot">&lt;-</span> <span class="fu">svydesign</span>(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="sc">~</span> psu_id,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">strata =</span> <span class="sc">~</span> analytic_stratum,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">weights =</span> <span class="sc">~</span> final_weight,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> survey_data,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">nest=</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">svymean</span>(<span class="sc">~</span> <span class="fu">I</span>(transit <span class="sc">==</span> <span class="st">"public"</span>), <span class="at">design =</span> detroit_design)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">svyby</span>(<span class="sc">~</span> <span class="fu">I</span>(transit <span class="sc">==</span> <span class="st">"public"</span>), <span class="sc">~</span> age_domain,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">design =</span> detroit_design, <span class="at">FUN =</span> svymean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The <code>id</code> argument identifies PSUs (tracts), <code>strata</code> identifies the paired analytic strata, and <code>weights</code> holds the final nonresponse-adjusted weight. Setting <code>nest = TRUE</code> tells <code>svydesign()</code> that PSU identifiers restart within each stratum, which is the case in this design. Analysts should confirm that the stratum and PSU identifiers are formatted consistently before any variance calculation.</p>
+</section>
+<section id="jackknife-replication" class="level2">
+<h2 class="anchored" data-anchor-id="jackknife-replication">Jackknife replication</h2>
+<p>As an alternative to linearization, analysts can use delete-one-PSU jackknife (JKn). JKn drops one PSU at a time, re-estimates the statistic from each of the <span class="math inline">\(m = 40\)</span> reduced samples, and computes the variance from the spread of the replicate estimates. It is especially useful for nonlinear estimators such as ratios and quantiles, where the Taylor series approximation can be less accurate than the replicate-based variance.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>detroit_jk <span class="ot">&lt;-</span> <span class="fu">as.svrepdesign</span>(<span class="at">design =</span> detroit_design, <span class="at">type =</span> <span class="st">"JKn"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">svymean</span>(<span class="sc">~</span> <span class="fu">I</span>(transit <span class="sc">==</span> <span class="st">"public"</span>), <span class="at">design =</span> detroit_jk)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="where-the-sample-lands" class="level1">
+<h1>Where the Sample Lands</h1>
+<p>Figures 4 and 5 show the City of Detroit frame and the selected sample. Figure 4 shows all 265 tracts and 612 block groups on the cleaned frame, with tract boundaries in solid lines and block-group boundaries dotted. Figure 5 overlays the selected sample on the same basemap: the 40 sample tracts appear in blue fill, and the 40 selected block groups are outlined in red. The spread of selected tracts across the city reflects the implicit geographic stratification produced by systematic PPS selection on the FIPS-sorted frame.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-frame-map" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-fig-pos="H">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-frame-map-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../outputs/figures/detroit_frame_map.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:95.0%" data-fig-pos="H">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-frame-map-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: City of Detroit sampling frame: census tracts (solid outlines) and block groups (dotted outlines) on a Stadia Maps basemap.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-sample-map" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-fig-pos="H">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-sample-map-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../outputs/figures/detroit_sample_map.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:95.0%" data-fig-pos="H">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sample-map-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: Selected sample: 40 tracts (blue fill) with the 40 selected block groups outlined in red.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Kish, L. (1965). <em>Survey Sampling</em>. New York: John Wiley &amp; Sons.</p>
+<p>Tillé, Y., &amp; Matei, A. (2016). <em>sampling: Survey Sampling</em>. R package.</p>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="codebook-for-exported-data-files" class="level1">
+<h1>Codebook for Exported Data Files</h1>
+<p>Three data files accompany this report. The two frame files describe every unit on the sampling frame at the time of selection and include the composite measure of size used to draw the sample. The sample file contains only the 40 selected block groups, along with their selection probabilities, per-domain sampling rates, and base weights. The codebooks below describe every variable on each of these files.</p>
+<div class="cell">
+<div id="tbl-codebook-frame" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-codebook-frame-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;4: Codebook: frame files (tract and block-group levels)
+</figcaption>
+<div aria-describedby="tbl-codebook-frame-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Variable</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">File</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Type</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 1.3in; font-family: monospace;">Tract</td>
+<td style="text-align: left; width: 0.7in;">PSU, BG</td>
+<td style="text-align: left; width: 0.7in;">character</td>
+<td style="text-align: left; width: 3in;">11-digit census tract FIPS code.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 1.3in; font-family: monospace;">BlockGroup</td>
+<td style="text-align: left; width: 0.7in;">BG</td>
+<td style="text-align: left; width: 0.7in;">character</td>
+<td style="text-align: left; width: 3in;">12-digit block group FIPS code.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 1.3in; font-family: monospace;">TotHH</td>
+<td style="text-align: left; width: 0.7in;">PSU, BG</td>
+<td style="text-align: left; width: 0.7in;">numeric</td>
+<td style="text-align: left; width: 3in;">Occupied housing units (DHC H1).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 1.3in; font-family: monospace;">TotAdult</td>
+<td style="text-align: left; width: 0.7in;">PSU, BG</td>
+<td style="text-align: left; width: 0.7in;">numeric</td>
+<td style="text-align: left; width: 3in;">Persons aged 18+.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 1.3in; font-family: monospace;">Age18to34</td>
+<td style="text-align: left; width: 0.7in;">PSU, BG</td>
+<td style="text-align: left; width: 0.7in;">numeric</td>
+<td style="text-align: left; width: 3in;">Persons aged 18 to 34.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 1.3in; font-family: monospace;">Age35to49</td>
+<td style="text-align: left; width: 0.7in;">PSU, BG</td>
+<td style="text-align: left; width: 0.7in;">numeric</td>
+<td style="text-align: left; width: 3in;">Persons aged 35 to 49.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 1.3in; font-family: monospace;">Age50to64</td>
+<td style="text-align: left; width: 0.7in;">PSU, BG</td>
+<td style="text-align: left; width: 0.7in;">numeric</td>
+<td style="text-align: left; width: 3in;">Persons aged 50 to 64.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 1.3in; font-family: monospace;">Age65plus</td>
+<td style="text-align: left; width: 0.7in;">PSU, BG</td>
+<td style="text-align: left; width: 0.7in;">numeric</td>
+<td style="text-align: left; width: 3in;">Persons aged 65 and older.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 1.3in; font-family: monospace;">MOS</td>
+<td style="text-align: left; width: 0.7in;">PSU</td>
+<td style="text-align: left; width: 0.7in;">numeric</td>
+<td style="text-align: left; width: 3in;">Composite MOS for the tract.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 1.3in; font-family: monospace;">MOS_bg</td>
+<td style="text-align: left; width: 0.7in;">BG</td>
+<td style="text-align: left; width: 0.7in;">numeric</td>
+<td style="text-align: left; width: 3in;">Composite MOS for the block group.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 1.3in; font-family: monospace;">pi_i</td>
+<td style="text-align: left; width: 0.7in;">PSU</td>
+<td style="text-align: left; width: 0.7in;">numeric</td>
+<td style="text-align: left; width: 3in;">PSU selection probability.</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</figure>
+</div>
+</div>
+<div class="cell">
+<div id="tbl-codebook-sample" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-codebook-sample-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;5: Codebook: sample file (40 selected block groups)
+</figcaption>
+<div aria-describedby="tbl-codebook-sample-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Variable</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Type</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 1.4in; font-family: monospace;">Tract</td>
+<td style="text-align: left; width: 0.8in;">character</td>
+<td style="text-align: left; width: 3.5in;">Tract FIPS code of the selected PSU.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 1.4in; font-family: monospace;">BlockGroup</td>
+<td style="text-align: left; width: 0.8in;">character</td>
+<td style="text-align: left; width: 3.5in;">Block group FIPS code of the selected SSU.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 1.4in; font-family: monospace;">TotHH</td>
+<td style="text-align: left; width: 0.8in;">numeric</td>
+<td style="text-align: left; width: 3.5in;">Occupied housing units in the selected BG.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 1.4in; font-family: monospace;">TotAdult</td>
+<td style="text-align: left; width: 0.8in;">numeric</td>
+<td style="text-align: left; width: 3.5in;">Adults 18+ in the selected BG.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 1.4in; font-family: monospace;">Age18to34</td>
+<td style="text-align: left; width: 0.8in;">numeric</td>
+<td style="text-align: left; width: 3.5in;">Adults 18 to 34 in the selected BG.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 1.4in; font-family: monospace;">Age35to49</td>
+<td style="text-align: left; width: 0.8in;">numeric</td>
+<td style="text-align: left; width: 3.5in;">Adults 35 to 49 in the selected BG.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 1.4in; font-family: monospace;">Age50to64</td>
+<td style="text-align: left; width: 0.8in;">numeric</td>
+<td style="text-align: left; width: 3.5in;">Adults 50 to 64 in the selected BG.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 1.4in; font-family: monospace;">Age65plus</td>
+<td style="text-align: left; width: 0.8in;">numeric</td>
+<td style="text-align: left; width: 3.5in;">Adults 65+ in the selected BG.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 1.4in; font-family: monospace;">MOS_bg</td>
+<td style="text-align: left; width: 0.8in;">numeric</td>
+<td style="text-align: left; width: 3.5in;">Block-group-level composite MOS.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 1.4in; font-family: monospace;">pi_i</td>
+<td style="text-align: left; width: 0.8in;">numeric</td>
+<td style="text-align: left; width: 3.5in;">PSU selection probability.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 1.4in; font-family: monospace;">pij_given_i</td>
+<td style="text-align: left; width: 0.8in;">numeric</td>
+<td style="text-align: left; width: 3.5in;">Conditional BG probability given the PSU.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 1.4in; font-family: monospace;">pi_ij</td>
+<td style="text-align: left; width: 0.8in;">numeric</td>
+<td style="text-align: left; width: 3.5in;">Joint BG selection probability.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 1.4in; font-family: monospace;">rate_Age18to34</td>
+<td style="text-align: left; width: 0.8in;">numeric</td>
+<td style="text-align: left; width: 3.5in;">Within-BG sampling rate, domain 18-34.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 1.4in; font-family: monospace;">rate_Age35to49</td>
+<td style="text-align: left; width: 0.8in;">numeric</td>
+<td style="text-align: left; width: 3.5in;">Within-BG sampling rate, domain 35-49.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 1.4in; font-family: monospace;">rate_Age50to64</td>
+<td style="text-align: left; width: 0.8in;">numeric</td>
+<td style="text-align: left; width: 3.5in;">Within-BG sampling rate, domain 50-64.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 1.4in; font-family: monospace;">rate_Age65plus</td>
+<td style="text-align: left; width: 0.8in;">numeric</td>
+<td style="text-align: left; width: 3.5in;">Within-BG sampling rate, domain 65+.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 1.4in; font-family: monospace;">d0_bg</td>
+<td style="text-align: left; width: 0.8in;">numeric</td>
+<td style="text-align: left; width: 3.5in;">BG-level base weight (inverse of pi_ij).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 1.4in; font-family: monospace;">d0_18to34</td>
+<td style="text-align: left; width: 0.8in;">numeric</td>
+<td style="text-align: left; width: 3.5in;">Person-level base weight, domain 18-34.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 1.4in; font-family: monospace;">d0_35to49</td>
+<td style="text-align: left; width: 0.8in;">numeric</td>
+<td style="text-align: left; width: 3.5in;">Person-level base weight, domain 35-49.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 1.4in; font-family: monospace;">d0_50to64</td>
+<td style="text-align: left; width: 0.8in;">numeric</td>
+<td style="text-align: left; width: 3.5in;">Person-level base weight, domain 50-64.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 1.4in; font-family: monospace;">d0_65plus</td>
+<td style="text-align: left; width: 0.8in;">numeric</td>
+<td style="text-align: left; width: 3.5in;">Person-level base weight, domain 65+.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 1.4in; font-family: monospace;">exp_workload</td>
+<td style="text-align: left; width: 0.8in;">numeric</td>
+<td style="text-align: left; width: 3.5in;">Expected persons to contact in the BG.</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</figure>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="detailed-sample-listing" class="level1">
+<h1>Detailed Sample Listing</h1>
+<p>The full listing of the 40 selected block groups, along with all census counts, selection probabilities, per-domain sampling rates, and base weights, is provided as a separate deliverable in <code>SAMPLE_EffectSize.pdf</code>. Readers should consult that file for the row-level detail; the variables it contains are described in the sample-file codebook above. We kept the detailed listing in a standalone file rather than inside this report to keep the main document compact and to match the project’s deliverables structure.</p>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="disclosure-of-ai-assistance" class="level1">
+<h1>Disclosure of AI Assistance</h1>
+<p>We used Claude (Anthropic, Opus 4.7) as a coding assistant to troubleshoot three specific technical issues in the R code and Quarto rendering pipeline. AI was not used to draft prose, generate analytic decisions, or produce any of the interpretive content in this report. All text, design choices, and conclusions are the work of the team.</p>
+<p><strong>Where AI was used:</strong></p>
+<ul>
+<li><em>Debugging <code>dplyr::across()</code> behavior.</em> The original code applied the <code>f_d</code> domain sampling-rate vector to four domain-population columns using <code>across()</code>, and the result exhibited unexpected vector-recycling behavior that produced incorrect measures of size. AI assistance helped diagnose the cause and rewrite the mutation so that each domain column multiplies its matching <code>f_d</code> element.</li>
+<li><em>LaTeX and <code>kable()</code> formatting.</em> The appendix codebook tables initially overflowed the page margins, and subsequent attempts to fix the overflow produced a <code>setstretch</code> compilation error and an invalid <code>align</code> argument to <code>kable()</code>. AI assistance helped identify the correct combination of <code>kable()</code> arguments and <code>kableExtra::column_spec()</code> calls to control column widths without breaking compilation.</li>
+<li><em>Map rendering with <code>ggmap</code> and <code>geom_sf</code>.</em> The Detroit sample map required a Stadia Maps basemap underneath <code>geom_sf</code> polygon overlays. AI assistance helped configure the <code>inherit.aes = FALSE</code> argument on each <code>geom_sf</code> layer and suppress verbose <code>tigris</code> download output during rendering.</li>
+</ul>
+<p><strong>Verbatim prompts used:</strong></p>
+<ol type="1">
+<li>“why does <code>across()</code> recycle my f_d vector in a weird way?”</li>
+<li>“how should I format a wide kable table for PDF output?”</li>
+<li>“what’s the right way to overlay <code>geom_sf</code> on a <code>ggmap</code> basemap?”</li>
+</ol>
+<p>We reviewed, tested, and edited all AI output before incorporating it into the code base. No AI-generated text appears verbatim in this report.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
