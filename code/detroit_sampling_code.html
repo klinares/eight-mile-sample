@@ -1,0 +1,2028 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Effect Size">
+<meta name="dcterms.date" content="2026-05-04">
+
+<title>Detroit Transportation Survey</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="detroit_sampling_code_files/libs/clipboard/clipboard.min.js"></script>
+<script src="detroit_sampling_code_files/libs/quarto-html/quarto.js"></script>
+<script src="detroit_sampling_code_files/libs/quarto-html/popper.min.js"></script>
+<script src="detroit_sampling_code_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="detroit_sampling_code_files/libs/quarto-html/anchor.min.js"></script>
+<link href="detroit_sampling_code_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="detroit_sampling_code_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="detroit_sampling_code_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="detroit_sampling_code_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="detroit_sampling_code_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Detroit Transportation Survey</h1>
+<p class="subtitle lead">Multi-Stage Area Probability Sample Design</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Effect Size </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">May 4, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="sec-design" class="level1">
+<h1>Sample Design</h1>
+<section id="design-goals" class="level2">
+<h2 class="anchored" data-anchor-id="design-goals">Design Goals</h2>
+<p>The sample must satisfy four requirements simultaneously:</p>
+<ul>
+<li>Domain sample sizes: 1,000 respondents split equally (250 per group) across four age domains: 18–34, 35–49, 50–64, and 65+.</li>
+<li>Self-weighting within domains: every person in a given age group has the same overall selection probability, <span class="math inline">\(\pi_k(d) = f_d\)</span>, so that no weighting adjustments are needed to compensate for unequal selection across PSUs within a domain.</li>
+<li>Equal workload per PSU: the total expected number of persons to be contacted is the same in every sample tract, simplifying field management and cost control.</li>
+<li>Two-stage selection: 40 tracts (PSUs) selected with probability proportional to a composite measure of size, and 1 BG (SSU) per tract, also selected PPS (MOS). Person-level sampling rates are specified for field implementation but not executed here.</li>
+</ul>
+<section id="packages-and-setup" class="level3">
+<h3 class="anchored" data-anchor-id="packages-and-setup">Packages and setup</h3>
+<ul>
+<li>We load the packages needed for data wrangling (<code>tidyverse</code>, <code>readxl</code>), sample selection (<code>sampling</code>), survey analysis (<code>survey</code>, <code>srvyr</code>, <code>PracTools</code>), spatial mapping (<code>sf</code>, <code>tigris</code>, <code>ggmap</code>, <code>tidycensus</code>, <code>viridis</code>), and report formatting (<code>patchwork</code>, <code>knitr</code>, <code>scales</code>). The <code>tidycensus</code> and <code>ggmap</code> packages each require an API key.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  tidyverse, readxl,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  sampling,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  survey, srvyr,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  PracTools,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  sf, tigris, ggmap,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  tidycensus,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  viridis, patchwork,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  knitr, kableExtra, scales, here</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">tigris_class =</span> <span class="st">"sf"</span>, <span class="at">tigris_use_cache =</span> <span class="cn">TRUE</span>, <span class="at">scipen =</span> <span class="dv">999</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="sc">-</span><span class="dv">77</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># add api key, this will only work for me</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># load private API keys</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>api_keys <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"D:/repos/api-keys.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Census API key</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>census_key <span class="ot">&lt;-</span> api_keys <span class="sc">|&gt;</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(key_id <span class="sc">==</span> <span class="st">"Census_key"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(key)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="fu">census_api_key</span>(<span class="at">key =</span> census_key, <span class="at">install =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Stadia Maps API key</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>stadia_key <span class="ot">&lt;-</span> api_keys <span class="sc">|&gt;</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(key_id <span class="sc">==</span> <span class="st">"stadiamaps_key"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(key)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="fu">register_stadiamaps</span>(<span class="at">key =</span> stadia_key)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data-ingestion" class="level3">
+<h3 class="anchored" data-anchor-id="data-ingestion">Data ingestion</h3>
+<ul>
+<li>Quarto renders in a completely fresh R session — it does not have access to objects loaded in the RStudio live environment. We therefore read the data files using explicit paths. The <code>semi_join()</code> on <code>tract_fips</code> restricts the Wayne County records to only those tracts that fall inside the City of Detroit boundary.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># anchor to project root regardless of where the .qmd lives</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>here<span class="sc">::</span><span class="fu">i_am</span>(<span class="st">"inputs/Detroit_MI.xlsx"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>input_path   <span class="ot">&lt;-</span> <span class="fu">here</span>(<span class="st">"inputs"</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>census_tract <span class="ot">&lt;-</span> <span class="st">"Census_Tract_FIPS_Code_Detroit_MI.csv"</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>detroit_mi   <span class="ot">&lt;-</span> <span class="st">"Detroit_MI.xlsx"</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>tract_fips <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(input_path, census_tract),</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_names =</span> <span class="st">"GEOID"</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_types =</span> <span class="fu">cols</span>(<span class="at">GEOID =</span> <span class="fu">col_character</span>()),</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">skip =</span> <span class="dv">1</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>tract <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(input_path, detroit_mi),</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">"Tract"</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Tract =</span> <span class="fu">as.character</span>(Tract)) <span class="sc">|&gt;</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">semi_join</span>(tract_fips, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"Tract"</span> <span class="ot">=</span> <span class="st">"GEOID"</span>))</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>bg <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(input_path, detroit_mi),</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">"BlockGroup"</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">BlockGroup =</span> <span class="fu">as.character</span>(BlockGroup),</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">Tract =</span> <span class="fu">substr</span>(BlockGroup, <span class="dv">1</span>, <span class="dv">11</span>)</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">semi_join</span>(tract_fips, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"Tract"</span> <span class="ot">=</span> <span class="st">"GEOID"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="target-population" class="level2">
+<h2 class="anchored" data-anchor-id="target-population">Target Population</h2>
+<p>The target population consists of all non-institutionalized persons aged 18 and older residing in the City of Detroit, Michigan. The 2020 Decennial Census DHC Summary File reports approximately 480,131 adults (18+) in approximately 309,916 households. After removing the 25 duplicated zero-population records for tract 9855 and 5 additional zero-adult tracts, the cleaned frame contains 270 eligible census tracts and 612 block groups. After applying the Kish (1965) linking procedure described in <a href="#sec-frame" class="quarto-xref">Section&nbsp;1.3</a> to combine 5 undersized tracts with neighbors, the final frame used for selection contains 265 PSUs. The average number of adults per household is approximately 1.55.</p>
+</section>
+<section id="sec-frame" class="level2">
+<h2 class="anchored" data-anchor-id="sec-frame">Area Sampling Frame</h2>
+<section id="data-sources" class="level3">
+<h3 class="anchored" data-anchor-id="data-sources">Data sources</h3>
+<p>The sampling frame is constructed from two files:</p>
+<ul>
+<li><strong>Census Tract FIPS Code Detroit MI.csv</strong>: 280 FIPS codes identifying Detroit census tracts, from the City of Detroit Open Data Portal.</li>
+<li><strong>Detroit MI.xlsx</strong>: tract- and block-group-level population data provided by the course instructors, originating from the 2020 Decennial Census DHC Summary File for Wayne County, MI. It includes housing unit counts, total person counts, and person counts by sex and age from the P12 table (Sex by Age).</li>
+</ul>
+</section>
+<section id="data-cleaning" class="level3">
+<h3 class="anchored" data-anchor-id="data-cleaning">Data cleaning</h3>
+<ul>
+<li>Tract 26163985500 (tract 9855) appears identically 25 times in the data with zero population in every column, likely a water body or uninhabited industrial zone. Since it contributes no eligible population, we drop all instances.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>tract <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Tract <span class="sc">==</span> <span class="st">"26163985500"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">booktabs =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">format =</span> <span class="st">"latex"</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">latex_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"scale_down"</span>, <span class="st">"hold_position"</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># drop this tract</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>tract <span class="ot">&lt;-</span> tract <span class="sc">|&gt;</span> </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Tract <span class="sc">!=</span> <span class="st">"26163985500"</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"We are left with"</span>, tract <span class="sc">|&gt;</span> <span class="fu">nrow</span>(), <span class="st">"tracts"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>We are left with 275 tracts</code></pre>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+</section>
+<section id="frame-construction-assignment-8" class="level2">
+<h2 class="anchored" data-anchor-id="frame-construction-assignment-8">Frame construction (Assignment 8)</h2>
+<ul>
+<li><p>The DHC P12 table provides 49 Sex <span class="math inline">\(\times\)</span> Age columns per geography (e.g., <code>Male18to19Yrs</code>, <code>Female22to24Yrs</code>). We need to collapse these into the four survey age domains (18–34, 35–49, 50–64, 65+). The <code>age_patterns</code> named vector below is a single source of truth, it maps each domain label to a regex pattern that matches the corresponding P12 column names. If the domain boundaries ever change, only this vector needs updating.</p></li>
+<li><p>The pipeline works as follows: <code>pivot_longer()</code> reshapes all sex-by-age columns into rows, <code>map_chr()</code> classifies each row into a domain using the regex patterns, and <code>pivot_wider()</code> collapses back to one row per tract (or BG) with domain population counts as columns. Persons under 18 do not match any pattern and are removed by <code>filter(!is.na(AgeGroup))</code>.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># single source of truth for age domain classification.</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># each name is the output domain label; each value is a</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># regex pattern matching the P12 column name fragments</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># that belong to that domain.</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>age_patterns <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Age18to34"</span> <span class="ot">=</span> <span class="st">"18to19|20Yrs|21Yrs|22to24|25to29|30to34"</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Age35to49"</span> <span class="ot">=</span> <span class="st">"35to39|40to44|45to49"</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Age50to64"</span> <span class="ot">=</span> <span class="st">"50to54|55to59|60to61|62to64"</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Age65plus"</span> <span class="ot">=</span> <span class="st">"65to66|67to69|70to74|75to79|80to84|GE85"</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co"># psu frame (tract-level): one row per tract with</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co"># TotHH, TotAdult, and four age domain counts</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>psu_frame <span class="ot">&lt;-</span> tract <span class="sc">|&gt;</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># here is the regex matching</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">matches</span>(<span class="st">"^Male[^T]|^Female[^T]"</span>),</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"SexAge"</span>, <span class="at">values_to =</span> <span class="st">"elements"</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>TotPerson) <span class="sc">|&gt;</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># classify each sex-by-age column into a domain</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">AgeGroup =</span> <span class="fu">map_chr</span>(SexAge, <span class="sc">~</span> {</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>      match <span class="ot">&lt;-</span> <span class="fu">names</span>(age_patterns)[<span class="fu">str_detect</span>(.x, age_patterns)]</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">length</span>(match) <span class="sc">==</span> <span class="dv">0</span>) <span class="cn">NA_character_</span> <span class="cf">else</span> match</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(AgeGroup)) <span class="sc">|&gt;</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>  <span class="co"># sum male + female within each domain for each tract</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">sum</span>(elements), <span class="at">.by =</span> <span class="fu">c</span>(Tract, TotHH, AgeGroup)) <span class="sc">|&gt;</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> AgeGroup, <span class="at">values_from =</span> n) <span class="sc">|&gt;</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">TotAdult =</span> <span class="fu">rowSums</span>(<span class="fu">across</span>(<span class="fu">starts_with</span>(<span class="st">"Age"</span>)))) <span class="sc">|&gt;</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(TotAdult, <span class="at">.after =</span> <span class="st">"TotHH"</span>)</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a><span class="co"># ssu frame (block-group-level): same pipeline,</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a><span class="co"># but keeps the bg and parent tract identifiers</span></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>ssu_frame <span class="ot">&lt;-</span> bg <span class="sc">|&gt;</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">matches</span>(<span class="st">"^Male[^T]|^Female[^T]"</span>),</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"SexAge"</span>, <span class="at">values_to =</span> <span class="st">"elements"</span></span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>TotPerson) <span class="sc">|&gt;</span></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">AgeGroup =</span> <span class="fu">map_chr</span>(SexAge, <span class="sc">~</span> {</span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>      match <span class="ot">&lt;-</span> <span class="fu">names</span>(age_patterns)[<span class="fu">str_detect</span>(.x, age_patterns)]</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">length</span>(match) <span class="sc">==</span> <span class="dv">0</span>) <span class="cn">NA_character_</span> <span class="cf">else</span> match</span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(AgeGroup)) <span class="sc">|&gt;</span></span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">sum</span>(elements), <span class="at">.by =</span> <span class="fu">c</span>(BlockGroup, Tract, TotHH, AgeGroup)) <span class="sc">|&gt;</span></span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> AgeGroup, <span class="at">values_from =</span> n) <span class="sc">|&gt;</span></span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">TotAdult =</span> <span class="fu">rowSums</span>(<span class="fu">across</span>(<span class="fu">starts_with</span>(<span class="st">"Age"</span>)))) <span class="sc">|&gt;</span></span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(TotAdult, <span class="at">.after =</span> <span class="st">"TotHH"</span>)</span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"psu frame:"</span>, <span class="fu">nrow</span>(psu_frame), <span class="st">"tracts</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>psu frame: 275 tracts</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"ssu frame:"</span>, <span class="fu">nrow</span>(ssu_frame), <span class="st">"block groups</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>ssu frame: 627 block groups</code></pre>
+</div>
+</div>
+<section id="quality-control-and-linking-vdk-ch.-11-sec.-11.1" class="level3">
+<h3 class="anchored" data-anchor-id="quality-control-and-linking-vdk-ch.-11-sec.-11.1">Quality control and linking (VDK Ch. 11, Sec. 11.1)</h3>
+<ul>
+<li><p>Before sample selection, we must verify that every unit in the frame can support the required workload. VDK Chapter 11 (Sec. 11.1) describes the quality control checks: (1) does each BG provide an adequate workload? (2) will any BG have a large selection probability? The key feasibility check from VDK p.&nbsp;287 is that the within-BG sampling rate must not exceed 1: <span class="math display">\[\pi_{k|ij}(d) = \frac{\bar{q} \, f_d}{S_{ij}} \leq 1 \quad \text{for every BG } j \text{ and domain } d\]</span> where <span class="math inline">\(\bar{q}\)</span> is the workload per BG, <span class="math inline">\(f_d\)</span> is the domain sampling rate, and <span class="math inline">\(S_{ij}\)</span> is the BG-level composite MOS. If a BG violates this, more persons would need to be selected from a domain than actually exist there.</p></li>
+<li><p>First, we drop tracts and BGs with zero adult population (these have <span class="math inline">\(S_i = 0\)</span> and would cause division-by-zero in the selection probability formulas). We then identify small tracts that have all their BGs violate the feasibility check, and combine them with geographic neighbors following a linking procedure introduced by Kish (1965) recommended in VDK Ch. 11. A few small BGs within otherwise large tracts also violate feasibility, but since they have near-zero MOS they are extremely unlikely to be selected by the PPS procedure; we note their existence and would apply Kish linking in the field if one were selected.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># drop tracts with zero adult population --- these are</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ineligible areas (water, industrial, institutional)</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>zero_tracts <span class="ot">&lt;-</span> psu_frame <span class="sc">|&gt;</span> <span class="fu">filter</span>(TotAdult <span class="sc">==</span> <span class="dv">0</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Zero-adult tracts to drop:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Zero-adult tracts to drop:</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>zero_tracts <span class="sc">|&gt;</span> <span class="fu">select</span>(Tract, TotHH, TotAdult) <span class="sc">|&gt;</span> <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Tract</th>
+<th style="text-align: right;">TotHH</th>
+<th style="text-align: right;">TotAdult</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">26163981800</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">26163984200</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">26163985800</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">26163985900</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">26163981700</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>psu_frame <span class="ot">&lt;-</span> psu_frame <span class="sc">|&gt;</span> <span class="fu">filter</span>(TotAdult <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>ssu_frame <span class="ot">&lt;-</span> ssu_frame <span class="sc">|&gt;</span> <span class="fu">filter</span>(Tract <span class="sc">%in%</span> psu_frame<span class="sc">$</span>Tract)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># also drop zero-adult BGs within remaining tracts</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Zero-adult BGs dropped:"</span>, <span class="fu">sum</span>(ssu_frame<span class="sc">$</span>TotAdult <span class="sc">==</span> <span class="dv">0</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Zero-adult BGs dropped: 9 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>ssu_frame <span class="ot">&lt;-</span> ssu_frame <span class="sc">|&gt;</span> <span class="fu">filter</span>(TotAdult <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"after dropping zeros, we are left with"</span>, <span class="fu">nrow</span>(psu_frame), <span class="st">"tracts,"</span>,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">nrow</span>(ssu_frame), <span class="st">"BGs</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>after dropping zeros, we are left with 270 tracts, 612 BGs</code></pre>
+</div>
+</div>
+<p><br>
+</p>
+<ul>
+<li>Next we compute preliminary design parameters to identify undersized units. The domain sampling rates under Approach A (selection-based, see Design Parameter section below) are <span class="math inline">\(f_d = n_d^{\text{select}} / N_d\)</span> where <span class="math inline">\(n_d^{\text{select}} = 250 / r_d\)</span> and <span class="math inline">\(r_d\)</span> is the expected response rate from the project assignment. The workload per BG is <span class="math inline">\(\bar{q} = \sum_d n_d^{\text{select}} / (m \cdot \bar{n})\)</span>. The minimum BG MOS for feasibility is <span class="math inline">\(\bar{q} \cdot \max(f_d)\)</span>, corresponding to roughly 54 to 62 adults depending on age mix (54 if the BG’s adults are concentrated in the highest-rate 35–49 domain, 62 if in the lowest-rate 50–64 domain).</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># design constants from the assignment</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="dv">40</span>       <span class="co"># sample PSUs</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>n_bar <span class="ot">&lt;-</span> <span class="dv">1</span>    <span class="co"># BGs per sample PSU</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># preliminary f_d from the current (pre-linking) frame</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>prelim_params <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">domain =</span> <span class="fu">c</span>(<span class="st">"18-34"</span>, <span class="st">"35-49"</span>, <span class="st">"50-64"</span>, <span class="st">"65+"</span>),</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_respond =</span> <span class="fu">rep</span>(<span class="dv">250</span>, <span class="dv">4</span>),</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># given to us</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">resp_rate =</span> <span class="fu">c</span>(<span class="fl">0.35</span>, <span class="fl">0.45</span>, <span class="fl">0.50</span>, <span class="fl">0.65</span>),</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">N_d =</span> <span class="fu">c</span>(<span class="fu">sum</span>(psu_frame<span class="sc">$</span>Age18to34), <span class="fu">sum</span>(psu_frame<span class="sc">$</span>Age35to49),</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>          <span class="fu">sum</span>(psu_frame<span class="sc">$</span>Age50to64), <span class="fu">sum</span>(psu_frame<span class="sc">$</span>Age65plus))</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> </span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n_select =</span> n_respond <span class="sc">/</span> resp_rate, <span class="at">f_d =</span> n_select <span class="sc">/</span> N_d)</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>f_d_prelim <span class="ot">&lt;-</span> prelim_params<span class="sc">$</span>f_d</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(f_d_prelim) <span class="ot">&lt;-</span> prelim_params<span class="sc">$</span>domain</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>q_bar_prelim <span class="ot">&lt;-</span> <span class="fu">sum</span>(prelim_params<span class="sc">$</span>n_select) <span class="sc">/</span> (m <span class="sc">*</span> n_bar)</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="co"># preliminary bg-level mos for feasibility checks</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>ssu_frame <span class="ot">&lt;-</span> ssu_frame <span class="sc">|&gt;</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">MOS_bg =</span> f_d_prelim[<span class="st">"18-34"</span>] <span class="sc">*</span> Age18to34 <span class="sc">+</span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>           f_d_prelim[<span class="st">"35-49"</span>] <span class="sc">*</span> Age35to49 <span class="sc">+</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>           f_d_prelim[<span class="st">"50-64"</span>] <span class="sc">*</span> Age50to64 <span class="sc">+</span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>           f_d_prelim[<span class="st">"65+"</span>] <span class="sc">*</span> Age65plus)</span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a><span class="co"># minimum mos needed: q_bar * max(f_d)</span></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>min_mos <span class="ot">&lt;-</span> q_bar_prelim <span class="sc">*</span> <span class="fu">max</span>(f_d_prelim)</span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"What is the min BG MOS for feasibility?"</span>, <span class="fu">round</span>(min_mos, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>What is the min BG MOS for feasibility? 0.2642 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># identify violating BGs</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>ssu_violations <span class="ot">&lt;-</span> ssu_frame <span class="sc">|&gt;</span> <span class="fu">filter</span>(MOS_bg <span class="sc">&lt;</span> min_mos)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"How many BGs are failing feasibility?"</span>, <span class="fu">nrow</span>(ssu_violations), <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>How many BGs are failing feasibility? 14 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># which tracts have ALL their BGs failing? these are the</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># undersized tracts that need PSU-level linking</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>tiny_tracts <span class="ot">&lt;-</span> ssu_frame <span class="sc">|&gt;</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Tract <span class="sc">%in%</span> ssu_violations<span class="sc">$</span>Tract) <span class="sc">|&gt;</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Tract) <span class="sc">|&gt;</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n_bgs =</span> <span class="fu">n</span>(),</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">n_fail =</span> <span class="fu">sum</span>(MOS_bg <span class="sc">&lt;</span> min_mos), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n_fail <span class="sc">==</span> n_bgs) <span class="sc">|&gt;</span> </span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(Tract)</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"How many undersized tracts (all BGs fail):"</span>, <span class="fu">length</span>(tiny_tracts), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>How many undersized tracts (all BGs fail): 5 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>psu_frame <span class="sc">|&gt;</span> <span class="fu">filter</span>(Tract <span class="sc">%in%</span> tiny_tracts) <span class="sc">|&gt;</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Tract, TotHH, TotAdult) <span class="sc">|&gt;</span> </span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Tract</th>
+<th style="text-align: right;">TotHH</th>
+<th style="text-align: right;">TotAdult</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">26163524500</td>
+<td style="text-align: right;">39</td>
+<td style="text-align: right;">71</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">26163983600</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">26163984100</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">26163985000</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">26163985200</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+<ul>
+<li>We combine the undersized tracts with their nearest geographic neighbor on the FIPS-sorted frame. The combined unit’s populations and MOS are summed. This is a simplified version of the Kish (1965) linking procedure, where we sort the frame, and for each undersized unit, merge it forward into the next adequately-sized unit.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># find the nearest non-tiny neighbor for each undersized tract</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>all_sorted <span class="ot">&lt;-</span> psu_frame <span class="sc">|&gt;</span> <span class="fu">arrange</span>(Tract) <span class="sc">|&gt;</span> <span class="fu">pull</span>(Tract)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>non_tiny <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(all_sorted, tiny_tracts)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>psu_link_map <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">original =</span> tiny_tracts) <span class="sc">|&gt;</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">linked_to =</span> <span class="fu">map_chr</span>(original, <span class="cf">function</span>(tr) {</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    fwd <span class="ot">&lt;-</span> non_tiny[non_tiny <span class="sc">&gt;</span> tr]</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    bwd <span class="ot">&lt;-</span> non_tiny[non_tiny <span class="sc">&lt;</span> tr]</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(fwd) <span class="sc">&gt;</span> <span class="dv">0</span>) fwd[<span class="dv">1</span>] <span class="cf">else</span> <span class="fu">tail</span>(bwd, <span class="dv">1</span>)</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  }))</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"We link the following PSUs:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>We link the following PSUs:</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>psu_link_map <span class="sc">|&gt;</span> <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">original</th>
+<th style="text-align: left;">linked_to</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">26163524500</td>
+<td style="text-align: left;">26163524600</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">26163983600</td>
+<td style="text-align: left;">26163985100</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">26163984100</td>
+<td style="text-align: left;">26163985100</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">26163985000</td>
+<td style="text-align: left;">26163985100</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">26163985200</td>
+<td style="text-align: left;">26163985300</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># assign PSU_ID: linked tracts get their neighbor's id</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>psu_frame <span class="ot">&lt;-</span> psu_frame <span class="sc">|&gt;</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">PSU_ID =</span> <span class="fu">if_else</span>(</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    Tract <span class="sc">%in%</span> psu_link_map<span class="sc">$</span>original,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    psu_link_map<span class="sc">$</span>linked_to[<span class="fu">match</span>(Tract, psu_link_map<span class="sc">$</span>original)],</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    Tract))</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>ssu_frame <span class="ot">&lt;-</span> ssu_frame <span class="sc">|&gt;</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">PSU_ID =</span> <span class="fu">if_else</span>(</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    Tract <span class="sc">%in%</span> psu_link_map<span class="sc">$</span>original,</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    psu_link_map<span class="sc">$</span>linked_to[<span class="fu">match</span>(Tract, psu_link_map<span class="sc">$</span>original)],</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>    Tract))</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="co"># aggregate to composite psu level</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>psu_frame <span class="ot">&lt;-</span> psu_frame <span class="sc">|&gt;</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(PSU_ID) <span class="sc">|&gt;</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">reframe</span>(<span class="at">n_tracts =</span> <span class="fu">n</span>(), <span class="at">TotHH =</span> <span class="fu">sum</span>(TotHH), <span class="at">TotAdult =</span> <span class="fu">sum</span>(TotAdult),</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">Age18to34 =</span> <span class="fu">sum</span>(Age18to34), <span class="at">Age35to49 =</span> <span class="fu">sum</span>(Age35to49),</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>            <span class="at">Age50to64 =</span> <span class="fu">sum</span>(Age50to64), <span class="at">Age65plus =</span> <span class="fu">sum</span>(Age65plus)) <span class="sc">|&gt;</span></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">Tract =</span> PSU_ID)</span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a><span class="co"># update ssu_frame: drop old Tract (original parent tract id),</span></span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a><span class="co"># replace with PSU_ID (the linked-to tract), and drop stale MOS</span></span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>ssu_frame <span class="ot">&lt;-</span> ssu_frame <span class="sc">|&gt;</span></span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>Tract, <span class="sc">-</span>MOS_bg) <span class="sc">|&gt;</span></span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">Tract =</span> PSU_ID)</span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"How many PSU after linking?"</span>, <span class="fu">nrow</span>(psu_frame), <span class="st">"PSUs</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>How many PSU after linking? 265 PSUs</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"How many combined PSUs?"</span>, <span class="fu">sum</span>(psu_frame<span class="sc">$</span>n_tracts <span class="sc">&gt;</span> <span class="dv">1</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>How many combined PSUs? 3 </code></pre>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+</section>
+<section id="sec-params" class="level2">
+<h2 class="anchored" data-anchor-id="sec-params">Design parameters (Assignment 8)</h2>
+<ul>
+<li><p>The composite MOS method (VDK Sec. 10.5) requires domain sampling rates <span class="math inline">\(f_d = n_d / N_d\)</span>, where <span class="math inline">\(n_d\)</span> is the desired domain sample size and <span class="math inline">\(N_d\)</span> is the domain population. VDK p.&nbsp;282 defines this notation. There are two conventions for what <span class="math inline">\(n_d\)</span> means:</p>
+<ul>
+<li><p><strong>Approach A (selection-based)</strong>: <span class="math inline">\(n_d = n_d^{\text{select}} = 250 / r_d\)</span>, the number of persons to <em>contact</em> in each domain, inflated for the expected non-response rate <span class="math inline">\(r_d\)</span>. This builds NR into the MOS so the design directly yields enough selections to produce 250 respondents per domain after expected losses.</p></li>
+<li><p><strong>Approach B (respondent-based, VDK Ch. 11 pattern)</strong>: <span class="math inline">\(n_d = 250\)</span>, the respondent target. This is how the Anne Arundel County example in VDK Table 11.1 is set up. NR inflation is then applied at the person-selection stage in the field rather than in the MOS.</p></li>
+</ul></li>
+<li><p>Under Approach A, the workload per BG is <span class="math inline">\(\bar{q} = \sum_d n_d^{\text{select}} / (m \cdot \bar{n}) \approx 53.9\)</span> persons to contact. Under Approach B, <span class="math inline">\(\bar{q} = 1000 / 40 = 25\)</span> respondents. We proceed with <strong>Approach A</strong> because it keeps all selection probabilities self-contained at the design stage — field teams simply apply the rates; no additional NR inflation is needed.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># recompute N_d from the cleaned, linked frame</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>N_d <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">sum</span>(psu_frame<span class="sc">$</span>Age18to34), <span class="fu">sum</span>(psu_frame<span class="sc">$</span>Age35to49),</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>         <span class="fu">sum</span>(psu_frame<span class="sc">$</span>Age50to64), <span class="fu">sum</span>(psu_frame<span class="sc">$</span>Age65plus))</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="co"># approach A: selection-based f_d</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>design_params <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">domain =</span> <span class="fu">c</span>(<span class="st">"18-34"</span>, <span class="st">"35-49"</span>, <span class="st">"50-64"</span>, <span class="st">"65+"</span>),</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_respond =</span> <span class="fu">rep</span>(<span class="dv">250</span>, <span class="dv">4</span>),</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">resp_rate =</span> <span class="fu">c</span>(<span class="fl">0.35</span>, <span class="fl">0.45</span>, <span class="fl">0.50</span>, <span class="fl">0.65</span>),</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">N_d =</span> N_d</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> </span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_select =</span> n_respond <span class="sc">/</span> resp_rate, <span class="co"># inflate for NR</span></span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">f_d =</span> n_select <span class="sc">/</span> N_d <span class="co"># domain sampling rate</span></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Design parameters (Approach A):</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Design parameters (Approach A):</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>design_params <span class="sc">|&gt;</span> </span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">6</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">domain</th>
+<th style="text-align: right;">n_respond</th>
+<th style="text-align: right;">resp_rate</th>
+<th style="text-align: right;">N_d</th>
+<th style="text-align: right;">n_select</th>
+<th style="text-align: right;">f_d</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">18-34</td>
+<td style="text-align: right;">250</td>
+<td style="text-align: right;">0.35</td>
+<td style="text-align: right;">161357</td>
+<td style="text-align: right;">714.2857</td>
+<td style="text-align: right;">0.004427</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">35-49</td>
+<td style="text-align: right;">250</td>
+<td style="text-align: right;">0.45</td>
+<td style="text-align: right;">113272</td>
+<td style="text-align: right;">555.5556</td>
+<td style="text-align: right;">0.004905</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">50-64</td>
+<td style="text-align: right;">250</td>
+<td style="text-align: right;">0.50</td>
+<td style="text-align: right;">117763</td>
+<td style="text-align: right;">500.0000</td>
+<td style="text-align: right;">0.004246</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">65+</td>
+<td style="text-align: right;">250</td>
+<td style="text-align: right;">0.65</td>
+<td style="text-align: right;">87739</td>
+<td style="text-align: right;">384.6154</td>
+<td style="text-align: right;">0.004384</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extract as named vector</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>f_d <span class="ot">&lt;-</span> design_params<span class="sc">$</span>f_d</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(f_d) <span class="ot">&lt;-</span> design_params<span class="sc">$</span>domain</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>total_select <span class="ot">&lt;-</span> <span class="fu">sum</span>(design_params<span class="sc">$</span>n_select)</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>q_bar <span class="ot">&lt;-</span> total_select <span class="sc">/</span> (m <span class="sc">*</span> n_bar)</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Total selections (S):"</span>, <span class="fu">round</span>(total_select, <span class="dv">1</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Total selections (S): 2154.5 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Workload per BG (q_bar):"</span>, <span class="fu">round</span>(q_bar, <span class="dv">1</span>), <span class="st">"persons</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Workload per BG (q_bar): 53.9 persons</code></pre>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="sec-mos" class="level2">
+<h2 class="anchored" data-anchor-id="sec-mos">Composite MOS (VDK Eq. 10.1, Assignment 8)</h2>
+<ul>
+<li><p>The composite measure of size for PSU <span class="math inline">\(i\)</span> is defined as (VDK Eq. 10.1, p.&nbsp;282): <span class="math display">\[S_i = \sum_{d=1}^{D} f_d \cdot N_i(d)\]</span> This quantity represents the expected sample size from PSU <span class="math inline">\(i\)</span> if the desired domain sampling rates were applied to its domain populations. The total MOS across all PSUs equals the total desired sample size: <span class="math inline">\(S = \sum_{i \in U} S_i = \sum_d f_d N_d = n^{\text{select}}\)</span> (VDK p.&nbsp;282).</p></li>
+<li><p>PSU selection probabilities are proportional to <span class="math inline">\(S_i\)</span> (VDK p.&nbsp;282): <span class="math display">\[\pi_i = \frac{m \cdot S_i}{S}\]</span></p></li>
+<li><p>For the three-stage extension (VDK p.&nbsp;286), the BG-level composite MOS is <span class="math inline">\(S_{ij} = \sum_d f_d \cdot Q_{ij}(d)\)</span> where <span class="math inline">\(Q_{ij}(d)\)</span> is the population of domain <span class="math inline">\(d\)</span> in BG <span class="math inline">\(j\)</span> of tract <span class="math inline">\(i\)</span>. The BG conditional selection probability is <span class="math inline">\(\pi_{j|i} = \bar{n} \cdot S_{ij} / S_i\)</span> (VDK p.&nbsp;286). Note that since <span class="math inline">\(\bar{n} = 1\)</span> in our design, <span class="math inline">\(\pi_{j|i} = S_{ij} / S_i\)</span>.</p></li>
+<li><p>The within-BG person sampling rate for domain <span class="math inline">\(d\)</span> is (VDK p.&nbsp;288): <span class="math display">\[\pi_{k|ij}(d) = \frac{\bar{q} \, f_d}{S_{ij}}\]</span> The self-weighting property then follows algebraically (VDK p.&nbsp;286): <span class="math display">\[\pi_i \cdot \pi_{j|i} \cdot \pi_{k|ij}(d) = \frac{m \, S_i}{S} \cdot \frac{\bar{n} \, S_{ij}}{S_i} \cdot \frac{\bar{q} \, f_d}{S_{ij}} = \frac{m \, \bar{n} \, \bar{q}}{S} \, f_d = f_d\]</span> since <span class="math inline">\(S = m \cdot \bar{n} \cdot \bar{q}\)</span> (VDK p.&nbsp;286).</p></li>
+<li><p>The workload is constant in every BG (VDK p.&nbsp;287): <span class="math inline">\(\sum_d q^*_{ij}(d) = \bar{q}\)</span>, where <span class="math inline">\(q^*_{ij}(d) = \bar{q} \, f_d \, Q_{ij}(d) / S_{ij}\)</span> is the expected number of domain-<span class="math inline">\(d\)</span> selections in BG <span class="math inline">\(ij\)</span> (analogous to VDK Eq. 10.2 at the SSU level).</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># psu-level composite mos and selection probabilities</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="co"># use match() pattern to pin each domain column to its f_d value,</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="co"># avoiding the across()*vector recycling bug (which cycles f_d</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="co"># element-wise in column-major order, not column-by-column)</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>domain_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Age18to34"</span>, <span class="st">"Age35to49"</span>, <span class="st">"Age50to64"</span>, <span class="st">"Age65plus"</span>)</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="co"># recompute MOS with the FINAL f_d (should already be in compute-mos)</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>psu_frame <span class="ot">&lt;-</span> psu_frame <span class="sc">|&gt;</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">MOS =</span> <span class="fu">rowSums</span>(<span class="fu">across</span>(<span class="fu">all_of</span>(domain_cols),</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>                         <span class="sc">~</span> .x <span class="sc">*</span> f_d[<span class="fu">match</span>(<span class="fu">cur_column</span>(), domain_cols)])),</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">pi_i =</span> m <span class="sc">*</span> MOS <span class="sc">/</span> <span class="fu">sum</span>(MOS))</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>S_total <span class="ot">&lt;-</span> <span class="fu">sum</span>(psu_frame<span class="sc">$</span>MOS)</span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"S ="</span>, <span class="fu">round</span>(S_total, <span class="dv">2</span>),</span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"| should equal total_select ="</span>, <span class="fu">round</span>(total_select, <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>S = 2154.46 | should equal total_select = 2154.46 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"pi_i (PSU selection probability) range:"</span>, </span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">round</span>(<span class="fu">range</span>(psu_frame<span class="sc">$</span>pi_i), <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>pi_i (PSU selection probability) range: 0.0137 0.3629 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"any pi_i &gt; 1?"</span>, <span class="fu">any</span>(psu_frame<span class="sc">$</span>pi_i <span class="sc">&gt;</span> <span class="dv">1</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>any pi_i &gt; 1? FALSE </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># bg-level composite mos (same match() pattern)</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>ssu_frame <span class="ot">&lt;-</span> ssu_frame <span class="sc">|&gt;</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">MOS_bg =</span> <span class="fu">rowSums</span>(<span class="fu">across</span>(<span class="fu">all_of</span>(domain_cols),</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>                                 <span class="sc">~</span> .x <span class="sc">*</span> f_d[<span class="fu">match</span>(<span class="fu">cur_column</span>(), domain_cols)])))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-vdk-verify" class="level2">
+<h2 class="anchored" data-anchor-id="sec-vdk-verify">VDK 10.1 verification table</h2>
+<ul>
+<li><p>Following the spreadsheet layout in VDK Example 10.1 (Table 10.1, p.&nbsp;284), we verify four properties at the PSU level. These are the same checks I performed in Assignment 8 (VDK Exercise 10.3) using the two-domain example, extended here to four domains and applied to our Detroit frame.</p>
+<ol type="1">
+<li><strong>Feasibility</strong>: <span class="math inline">\(f_d \leq S_i / \bar{q}\)</span> for every domain, equivalently <span class="math inline">\(\bar{q} f_d / S_i \leq 1\)</span>.</li>
+<li><strong>Expected domain sample sizes</strong>: <span class="math inline">\(n^*_i(d) = \bar{q} \, f_d \, N_i(d) / S_i\)</span> (VDK Eq. 10.2 adapted to our notation).</li>
+<li><strong>Constant workload</strong>: <span class="math inline">\(\sum_d n^*_i(d) = \bar{q}\)</span> for every PSU.</li>
+<li><strong>Self-weighting</strong>: <span class="math inline">\(\pi_i \cdot \pi_{k|i}(d) = f_d\)</span>, where <span class="math inline">\(\pi_{k|i}(d) = \bar{q} \, f_d / S_i\)</span> is the within-PSU person rate.</li>
+</ol></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>vdk_table <span class="ot">&lt;-</span> psu_frame <span class="sc">|&gt;</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># step 1: within-psu rates</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">all_of</span>(domain_cols),</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>           <span class="sc">~</span> q_bar <span class="sc">*</span> f_d[<span class="fu">match</span>(<span class="fu">cur_column</span>(), domain_cols)] <span class="sc">/</span> MOS,</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">.names =</span> <span class="st">"rate_{.col}"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># step 2: checks</span></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">starts_with</span>(<span class="st">"rate_"</span>), <span class="sc">~</span> .x <span class="sc">&lt;=</span> <span class="dv">1</span>, <span class="at">.names =</span> <span class="st">"feas_{.col}"</span>),</span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">exp_workload =</span> <span class="fu">across</span>(<span class="fu">all_of</span>(domain_cols),</span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>                          <span class="sc">~</span> .x <span class="sc">*</span> q_bar <span class="sc">*</span> f_d[<span class="fu">match</span>(<span class="fu">cur_column</span>(), domain_cols)] <span class="sc">/</span> MOS) <span class="sc">|&gt;</span></span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rowSums</span>(),</span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">starts_with</span>(<span class="st">"rate_"</span>), <span class="sc">~</span> pi_i <span class="sc">*</span> .x, <span class="at">.names =</span> <span class="st">"sw_{.col}"</span>)</span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"(1) Are all within-psu rates &lt;= 1?</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(1) Are all within-psu rates &lt;= 1?</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>vdk_table <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">starts_with</span>(<span class="st">"feas"</span>), <span class="sc">~</span> <span class="fu">all</span>(.x))) <span class="sc">|&gt;</span> </span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">feas_rate_Age18to34</th>
+<th style="text-align: left;">feas_rate_Age35to49</th>
+<th style="text-align: left;">feas_rate_Age50to64</th>
+<th style="text-align: left;">feas_rate_Age65plus</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: left;">TRUE</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">(3) workload per psu (should all ="</span>, <span class="fu">round</span>(q_bar, <span class="dv">2</span>), <span class="st">"):</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+(3) workload per psu (should all = 53.86 ):</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(vdk_table<span class="sc">$</span>exp_workload)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  53.86   53.86   53.86   53.86   53.86   53.86 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">(4) self-weighting check (first 5 PSUs):</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+(4) self-weighting check (first 5 PSUs):</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"target f_d:"</span>, <span class="fu">round</span>(f_d, <span class="dv">6</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>target f_d: 0.004427 0.004905 0.004246 0.004384 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>vdk_table <span class="sc">|&gt;</span> <span class="fu">select</span>(Tract, <span class="fu">starts_with</span>(<span class="st">"sw_"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">5</span>) <span class="sc">|&gt;</span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">6</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 21%">
+<col style="width: 21%">
+<col style="width: 21%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Tract</th>
+<th style="text-align: right;">sw_rate_Age18to34</th>
+<th style="text-align: right;">sw_rate_Age35to49</th>
+<th style="text-align: right;">sw_rate_Age50to64</th>
+<th style="text-align: right;">sw_rate_Age65plus</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">26163500100</td>
+<td style="text-align: right;">0.004427</td>
+<td style="text-align: right;">0.004905</td>
+<td style="text-align: right;">0.004246</td>
+<td style="text-align: right;">0.004384</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">26163500200</td>
+<td style="text-align: right;">0.004427</td>
+<td style="text-align: right;">0.004905</td>
+<td style="text-align: right;">0.004246</td>
+<td style="text-align: right;">0.004384</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">26163500300</td>
+<td style="text-align: right;">0.004427</td>
+<td style="text-align: right;">0.004905</td>
+<td style="text-align: right;">0.004246</td>
+<td style="text-align: right;">0.004384</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">26163500400</td>
+<td style="text-align: right;">0.004427</td>
+<td style="text-align: right;">0.004905</td>
+<td style="text-align: right;">0.004246</td>
+<td style="text-align: right;">0.004384</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">26163500500</td>
+<td style="text-align: right;">0.004427</td>
+<td style="text-align: right;">0.004905</td>
+<td style="text-align: right;">0.004246</td>
+<td style="text-align: right;">0.004384</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="uniform-rate-discussion" class="level2">
+<h2 class="anchored" data-anchor-id="uniform-rate-discussion">Uniform rate discussion</h2>
+<ul>
+<li>Could a single sampling rate <span class="math inline">\(f = n^{\text{select}} / N_{\text{adult}}\)</span> be used for all persons regardless of age domain?
+<ul>
+<li>The table below shows the expected number of respondents per domain under such a uniform rate. Because response rates vary substantially (0.35 for ages 18–34 vs.&nbsp;0.65 for 65+), a uniform rate over-samples domains with higher response rates and under-samples those with lower rates. The 35–49 group falls approximately 8.5% short of the 250 target. The composite MOS avoids this problem by building domain-specific rates into the design from the start.</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>f_uniform <span class="ot">&lt;-</span> total_select <span class="sc">/</span> <span class="fu">sum</span>(psu_frame<span class="sc">$</span>TotAdult)</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>design_params <span class="sc">|&gt;</span></span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">exp_respond =</span> f_uniform <span class="sc">*</span> N_d <span class="sc">*</span> resp_rate,</span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">shortfall_pct =</span> <span class="fu">round</span>((n_respond <span class="sc">-</span> exp_respond) <span class="sc">/</span> n_respond <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(domain, N_d, exp_respond, shortfall_pct) <span class="sc">|&gt;</span> <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">domain</th>
+<th style="text-align: right;">N_d</th>
+<th style="text-align: right;">exp_respond</th>
+<th style="text-align: right;">shortfall_pct</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">18-34</td>
+<td style="text-align: right;">161357</td>
+<td style="text-align: right;">253.4159</td>
+<td style="text-align: right;">-1.4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">35-49</td>
+<td style="text-align: right;">113272</td>
+<td style="text-align: right;">228.7247</td>
+<td style="text-align: right;">8.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">50-64</td>
+<td style="text-align: right;">117763</td>
+<td style="text-align: right;">264.2146</td>
+<td style="text-align: right;">-5.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">65+</td>
+<td style="text-align: right;">87739</td>
+<td style="text-align: right;">255.9081</td>
+<td style="text-align: right;">-2.4</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+</section>
+<section id="sample-selection-vdk-ch.-3-ch.-11" class="level1">
+<h1>Sample Selection (VDK Ch. 3, Ch. 11)</h1>
+<ul>
+<li><p>We select the sample in two stages using <code>UPsystematic()</code> from the <code>sampling</code> package (Tille and Matei, 2016), which implements Madow’s systematic PPS method. The PSU frame is sorted by FIPS code before selection, which provides <strong>implicit geographic stratification</strong> — adjacent tracts on the sorted list tend to be geographic neighbors, so the systematic selection spreads the sample across the city (VDK Sec. 3.3).</p></li>
+<li><p>The assignment specifies <code>set.seed(-77)</code> for reproducibility. Systematic PPS does not permit computation of exact joint selection probabilities (<span class="math inline">\(\pi_{ii'} = 0\)</span> for some pairs), which precludes the Horvitz–Thompson variance estimator. In practice, we use the with-replacement variance approximation via paired analytic strata.</p></li>
+</ul>
+<section id="stage-1-psu-selection" class="level2">
+<h2 class="anchored" data-anchor-id="stage-1-psu-selection">Stage 1: PSU selection</h2>
+<ul>
+<li>We select <span class="math inline">\(m = 40\)</span> tracts with inclusion probabilities <span class="math inline">\(\pi_i = m \cdot S_i / S\)</span>. The <code>UPsystematic()</code> function takes these as input and returns a 0/1 indicator for each PSU.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sort by fips for implicit geographic stratification</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>psu_frame <span class="ot">&lt;-</span> psu_frame <span class="sc">|&gt;</span> <span class="fu">arrange</span>(Tract)</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="sc">-</span><span class="dv">77</span>)</span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>psu_sample <span class="ot">&lt;-</span> psu_frame <span class="sc">|&gt;</span></span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">selected =</span> <span class="fu">UPsystematic</span>(<span class="at">pik =</span> pi_i)) <span class="sc">|&gt;</span></span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(selected <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"How many PSUs did we select?"</span>, <span class="fu">nrow</span>(psu_sample), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>How many PSUs did we select? 40 </code></pre>
+</div>
+</div>
+</section>
+<section id="stage-2-ssu-block-group-selection" class="level2">
+<h2 class="anchored" data-anchor-id="stage-2-ssu-block-group-selection">Stage 2: SSU (block group) selection</h2>
+<ul>
+<li>Within each of the 40 sample tracts, we select <span class="math inline">\(\bar{n} = 1\)</span> BG with probability proportional to the BG-level composite MOS: <span class="math inline">\(\pi_{j|i} = \bar{n} \cdot S_{ij} / S_i = S_{ij} / S_i\)</span> (VDK p.&nbsp;286). For tracts with only a single BG, the selection is deterministic (<span class="math inline">\(\pi_{j|i} = 1\)</span>). The <code>select_one_bg()</code> helper handles both cases.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get BGs in sample tracts and compute conditional probabilities</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>bg_in_sample <span class="ot">&lt;-</span> ssu_frame <span class="sc">|&gt;</span></span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Tract <span class="sc">%in%</span> psu_sample<span class="sc">$</span>Tract) <span class="sc">|&gt;</span></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(psu_sample <span class="sc">|&gt;</span> </span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>              <span class="fu">select</span>(Tract, <span class="at">MOS_psu =</span> MOS), <span class="at">by =</span> <span class="st">"Tract"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pij_given_i =</span> n_bar <span class="sc">*</span> MOS_bg <span class="sc">/</span> MOS_psu)</span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a><span class="co"># helper: select 1 bg from a tract via systematic pps</span></span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="sc">-</span><span class="dv">77</span>)</span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a>select_one_bg <span class="ot">&lt;-</span> <span class="cf">function</span>(bg_sub) {</span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">nrow</span>(bg_sub) <span class="sc">==</span> <span class="dv">1</span>) <span class="fu">return</span>(bg_sub <span class="sc">|&gt;</span> </span>
+<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">mutate</span>(<span class="at">ssu_selected =</span> <span class="dv">1</span>L))</span>
+<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a>  pik_bg <span class="ot">&lt;-</span> <span class="fu">pmin</span>(bg_sub<span class="sc">$</span>pij_given_i <span class="sc">/</span> <span class="fu">sum</span>(bg_sub<span class="sc">$</span>pij_given_i) <span class="sc">*</span> n_bar, <span class="dv">1</span>)</span>
+<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb60-15"><a href="#cb60-15" aria-hidden="true" tabindex="-1"></a>  bg_sub <span class="sc">|&gt;</span> </span>
+<span id="cb60-16"><a href="#cb60-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">ssu_selected =</span> <span class="fu">as.integer</span>(<span class="fu">UPsystematic</span>(<span class="at">pik =</span> pik_bg)))</span>
+<span id="cb60-17"><a href="#cb60-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb60-18"><a href="#cb60-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-19"><a href="#cb60-19" aria-hidden="true" tabindex="-1"></a>bg_selected <span class="ot">&lt;-</span> bg_in_sample <span class="sc">|&gt;</span></span>
+<span id="cb60-20"><a href="#cb60-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Tract) <span class="sc">|&gt;</span> </span>
+<span id="cb60-21"><a href="#cb60-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_split</span>() <span class="sc">|&gt;</span></span>
+<span id="cb60-22"><a href="#cb60-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_dfr</span>(select_one_bg) <span class="sc">|&gt;</span> </span>
+<span id="cb60-23"><a href="#cb60-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ssu_selected <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb60-24"><a href="#cb60-24" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"How many BGs selected?"</span>, <span class="fu">nrow</span>(bg_selected), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>How many BGs selected? 40 </code></pre>
+</div>
+</div>
+</section>
+<section id="selection-probabilities" class="level2">
+<h2 class="anchored" data-anchor-id="selection-probabilities">Selection probabilities</h2>
+<ul>
+<li>The joint selection probability of BG <span class="math inline">\(j\)</span> in tract <span class="math inline">\(i\)</span> is <span class="math inline">\(\pi_{ij} = \pi_i \cdot \pi_{j|i}\)</span> (VDK p.&nbsp;308, Ch. 11). This is what our two-stage selection actually produces. We also compute the person-level domain rates <span class="math inline">\(\pi_{k|ij}(d) = \bar{q} f_d / S_{ij}\)</span> that field teams would implement, and verify that the expected workload per BG equals <span class="math inline">\(\bar{q}\)</span>.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>sample_bgs <span class="ot">&lt;-</span> bg_selected <span class="sc">|&gt;</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(psu_sample <span class="sc">|&gt;</span> <span class="fu">select</span>(Tract, pi_i), <span class="at">by =</span> <span class="st">"Tract"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">pi_ij =</span> pi_i <span class="sc">*</span> pij_given_i,</span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">all_of</span>(domain_cols),</span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>           <span class="sc">~</span> q_bar <span class="sc">*</span> f_d[<span class="fu">match</span>(<span class="fu">cur_column</span>(), domain_cols)] <span class="sc">/</span> MOS_bg,</span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">.names =</span> <span class="st">"rate_{.col}"</span>),</span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">exp_workload =</span> <span class="fu">across</span>(<span class="fu">all_of</span>(domain_cols),</span>
+<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a>                          <span class="sc">~</span> .x <span class="sc">*</span> q_bar <span class="sc">*</span> f_d[<span class="fu">match</span>(<span class="fu">cur_column</span>(), domain_cols)] <span class="sc">/</span> MOS_bg) <span class="sc">|&gt;</span></span>
+<span id="cb62-10"><a href="#cb62-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rowSums</span>(),</span>
+<span id="cb62-11"><a href="#cb62-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># base weights (VDK Ch. 13)</span></span>
+<span id="cb62-12"><a href="#cb62-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">d0_bg     =</span> <span class="dv">1</span> <span class="sc">/</span> pi_ij,</span>
+<span id="cb62-13"><a href="#cb62-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">d0_18to34 =</span> <span class="dv">1</span> <span class="sc">/</span> f_d[<span class="st">"18-34"</span>],</span>
+<span id="cb62-14"><a href="#cb62-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">d0_35to49 =</span> <span class="dv">1</span> <span class="sc">/</span> f_d[<span class="st">"35-49"</span>],</span>
+<span id="cb62-15"><a href="#cb62-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">d0_50to64 =</span> <span class="dv">1</span> <span class="sc">/</span> f_d[<span class="st">"50-64"</span>],</span>
+<span id="cb62-16"><a href="#cb62-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">d0_65plus =</span> <span class="dv">1</span> <span class="sc">/</span> f_d[<span class="st">"65+"</span>]</span>
+<span id="cb62-17"><a href="#cb62-17" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb62-18"><a href="#cb62-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-19"><a href="#cb62-19" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"What is the pi_ij range?"</span>, <span class="fu">round</span>(<span class="fu">range</span>(sample_bgs<span class="sc">$</span>pi_ij), <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>What is the pi_ij range? 0.0368 0.1652 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Are there any pi_ij &gt; 1?"</span>, <span class="fu">any</span>(sample_bgs<span class="sc">$</span>pi_ij <span class="sc">&gt;</span> <span class="dv">1</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Are there any pi_ij &gt; 1? FALSE </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"What is the nworkload per BG? (should ="</span>, <span class="fu">round</span>(q_bar, <span class="dv">1</span>), <span class="st">"):</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>What is the nworkload per BG? (should = 53.9 ):</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(sample_bgs<span class="sc">$</span>exp_workload)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  53.86   53.86   53.86   53.86   53.86   53.86 </code></pre>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="description-of-household-and-person-selection-third-stage" class="level2">
+<h2 class="anchored" data-anchor-id="description-of-household-and-person-selection-third-stage">Description of household and person selection (third stage)</h2>
+<ul>
+<li><p>In area probability sampling, persons are reached through households (VDK Ch. 10). We do not execute this stage because no address listing exists, but we describe the procedure that field teams would follow in each selected BG.</p></li>
+<li><p>The key outcome variables, vehicle ownership, transit use, skipping trips, asking for rides, are household-level or household-correlated characteristics. If multiple persons from the same household were selected, their responses would be correlated, inflating the design effect and reducing precision. For this reason we recommend selecting one eligible adult per sampled household using a random selection method such as the Kish grid or next-birthday rule.</p></li>
+<li><p>The field procedure within each selected BG:</p>
+<ol type="1">
+<li>Household listing: interviewers compile a complete listing of all occupied housing units using maps and Census address data.</li>
+<li>Household sampling: households are sampled systematically at a rate that, combined with <span class="math inline">\(\pi_{ij}\)</span>, yields the desired person-level rates. With approximately 1.55 eligible adults per household in Detroit, the HH rate is adjusted accordingly.</li>
+<li>Screening: at each sampled HH, interviewers administer a brief screener to enumerate all persons 18+ and classify each into an age domain.</li>
+<li>Within-HH selection: one eligible adult is selected at random. The selection probability is set to maintain <span class="math inline">\(\pi_{k|ij}(d) = \bar{q} f_d / S_{ij}\)</span> for each domain <span class="math inline">\(d\)</span>.</li>
+<li>Verification: the overall probability is <span class="math inline">\(\pi_i \cdot \pi_{j|i} \cdot \pi_{k|ij}(d) = f_d\)</span>, confirming self-weighting. The expected sample sizes are not integers, as VDK notes after Example 10.1, it is important to sample at the specified rates rather than rounding to fixed counts.</li>
+</ol></li>
+</ul>
+</section>
+</section>
+<section id="sec-precision" class="level1">
+<h1>Anticipated Precision (VDK Ch. 9)</h1>
+<ul>
+<li><p>For the key survey variable, the proportion of Detroit residents whose main means of transportation is public transit, precision under the cluster design depends on the design effect. For a two-stage cluster sample, the approximate design effect is (VDK Ch. 9, Eq. 9.5): <span class="math display">\[\text{deff} \approx 1 + (\bar{b} - 1) \, \delta\]</span> where <span class="math inline">\(\bar{b}\)</span> is the average number of respondents per PSU (<span class="math inline">\(\approx 25\)</span> in our design) and <span class="math inline">\(\delta\)</span> is the intraclass correlation coefficient measuring homogeneity within tracts. Values of <span class="math inline">\(\delta\)</span> for demographic/behavioral variables in U.S. urban populations typically range from 0.01 to 0.05, yielding deffs between 1.2 and 2.2.</p></li>
+<li><p>The variance of an estimated proportion <span class="math inline">\(\hat{p}\)</span> under the cluster design is approximately: <span class="math display">\[\text{Var}(\hat{p}) \approx \text{deff} \cdot \frac{p(1-p)}{n}\]</span> An analyst would estimate this using the ultimate cluster variance estimator, which in the with-replacement form is: <span class="math display">\[v_{PSU} = \frac{m}{m-1} \sum_{i \in s} \left( \sum_{k \in s_i} w_k y_k - \frac{\sum_{i \in s} \sum_{k \in s_i} w_k y_k}{m} \right)^2\]</span> This is implemented automatically by <code>survey::svymean()</code> when the design object specifies PSUs and strata (see Sec. 6).</p></li>
+<li><p>The table below shows the standard error, coefficient of variation, and 95% margin of error for a range of proportions and design effects at <span class="math inline">\(n = 1000\)</span> total respondents.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">expand_grid</span>(<span class="at">p =</span> <span class="fu">c</span>(.<span class="dv">10</span>, .<span class="dv">15</span>, .<span class="dv">20</span>, .<span class="dv">25</span>, .<span class="dv">30</span>), <span class="at">deff =</span> <span class="fu">c</span>(<span class="fl">1.5</span>, <span class="fl">2.0</span>, <span class="fl">2.5</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n =</span> <span class="dv">1000</span>,</span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">se =</span> <span class="fu">sqrt</span>(deff <span class="sc">*</span> p <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p) <span class="sc">/</span> n),</span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">cv =</span> se <span class="sc">/</span> p,</span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">moe =</span> <span class="fl">1.96</span> <span class="sc">*</span> se) <span class="sc">|&gt;</span></span>
+<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">n =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">p</th>
+<th style="text-align: right;">deff</th>
+<th style="text-align: right;">n</th>
+<th style="text-align: right;">se</th>
+<th style="text-align: right;">cv</th>
+<th style="text-align: right;">moe</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0.10</td>
+<td style="text-align: right;">1.5</td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">0.0116</td>
+<td style="text-align: right;">0.1162</td>
+<td style="text-align: right;">0.0228</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.10</td>
+<td style="text-align: right;">2.0</td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">0.0134</td>
+<td style="text-align: right;">0.1342</td>
+<td style="text-align: right;">0.0263</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.10</td>
+<td style="text-align: right;">2.5</td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">0.0150</td>
+<td style="text-align: right;">0.1500</td>
+<td style="text-align: right;">0.0294</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.15</td>
+<td style="text-align: right;">1.5</td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">0.0138</td>
+<td style="text-align: right;">0.0922</td>
+<td style="text-align: right;">0.0271</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.15</td>
+<td style="text-align: right;">2.0</td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">0.0160</td>
+<td style="text-align: right;">0.1065</td>
+<td style="text-align: right;">0.0313</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.15</td>
+<td style="text-align: right;">2.5</td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">0.0179</td>
+<td style="text-align: right;">0.1190</td>
+<td style="text-align: right;">0.0350</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.20</td>
+<td style="text-align: right;">1.5</td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">0.0155</td>
+<td style="text-align: right;">0.0775</td>
+<td style="text-align: right;">0.0304</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.20</td>
+<td style="text-align: right;">2.0</td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">0.0179</td>
+<td style="text-align: right;">0.0894</td>
+<td style="text-align: right;">0.0351</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.20</td>
+<td style="text-align: right;">2.5</td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">0.0200</td>
+<td style="text-align: right;">0.1000</td>
+<td style="text-align: right;">0.0392</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.25</td>
+<td style="text-align: right;">1.5</td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">0.0168</td>
+<td style="text-align: right;">0.0671</td>
+<td style="text-align: right;">0.0329</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.25</td>
+<td style="text-align: right;">2.0</td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">0.0194</td>
+<td style="text-align: right;">0.0775</td>
+<td style="text-align: right;">0.0380</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.25</td>
+<td style="text-align: right;">2.5</td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">0.0217</td>
+<td style="text-align: right;">0.0866</td>
+<td style="text-align: right;">0.0424</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.30</td>
+<td style="text-align: right;">1.5</td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">0.0177</td>
+<td style="text-align: right;">0.0592</td>
+<td style="text-align: right;">0.0348</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.30</td>
+<td style="text-align: right;">2.0</td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">0.0205</td>
+<td style="text-align: right;">0.0683</td>
+<td style="text-align: right;">0.0402</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.30</td>
+<td style="text-align: right;">2.5</td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">0.0229</td>
+<td style="text-align: right;">0.0764</td>
+<td style="text-align: right;">0.0449</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<ul>
+<li>For a transit use proportion of approximately <span class="math inline">\(p = 0.20\)</span> with <span class="math inline">\(\text{deff} = 2.0\)</span>, the 95% margin of error is <span class="math inline">\(\pm\)</span> 0.035, which is adequate for most policy analyses. Domain-level estimates (250 respondents each) would have approximately double the margin of error, around <span class="math inline">\(\pm\)</span> 0.07.</li>
+</ul>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="sec-weighting" class="level1">
+<h1>Weighting Plan (Assignment 9)</h1>
+<section id="overview-for-managers" class="level2">
+<h2 class="anchored" data-anchor-id="overview-for-managers">Overview for managers</h2>
+<p>Survey weights are numbers assigned to each respondent that allow us to produce estimates representative of the entire Detroit adult population. Without proper weighting, groups that were oversampled or that had higher response rates would be overrepresented in the estimates.</p>
+</section>
+<section id="base-weights-vdk-ch.-13-sec.-3" class="level2">
+<h2 class="anchored" data-anchor-id="base-weights-vdk-ch.-13-sec.-3">Base weights (VDK Ch. 13, Sec. 3)</h2>
+<ul>
+<li><p>The base weight (also called design weight) for a respondent is the inverse of the overall selection probability. At the BG level, our two-stage selection gives a joint probability of <span class="math inline">\(\pi_{ij} = \pi_i \cdot \pi_{j|i}\)</span>, so the BG-level base weight is: <span class="math display">\[d_{0,ij} = \frac{1}{\pi_i \cdot \pi_{j|i}}\]</span></p></li>
+<li><p>Under the full three-stage self-weighting design, the person-level probability in domain <span class="math inline">\(d\)</span> would be <span class="math inline">\(\pi_k(d) = f_d\)</span> (VDK p.&nbsp;283), giving a base weight of <span class="math inline">\(d_0(d) = 1/f_d = N_d / n_d^{\text{select}}\)</span> that is constant within each domain (Lecture Ch. 13, Example 13.3).</p></li>
+<li><p><strong>QC check</strong> (Lecture Slide 20): the sum of base weights across the expected sample in each domain should approximate the domain population total <span class="math inline">\(N_d\)</span>.</p></li>
+</ul>
+</section>
+<section id="unknown-eligibility-vdk-ch.-13-sec.-4" class="level2">
+<h2 class="anchored" data-anchor-id="unknown-eligibility-vdk-ch.-13-sec.-4">Unknown eligibility (VDK Ch. 13, Sec. 4)</h2>
+<ul>
+<li><p>During field listing, interviewers may encounter housing units whose eligibility cannot be determined — for example, units that appear occupied but where contact is never made, or addresses that turn out to be vacant or demolished. These cases are classified as unknown eligibility (<span class="math inline">\(s_{UNK}\)</span>).</p></li>
+<li><p>The standard approach is to redistribute the weight of unknowns to cases with known eligibility status within adjustment classes formed from frame variables available for all cases (Lecture Slide 30): <span class="math display">\[a_{1b} = \frac{\sum_{i \in s_b} d_{0i}}{\sum_{i \in s_{b,KN}} d_{0i}}\]</span> where <span class="math inline">\(s_b\)</span> is all sample cases in class <span class="math inline">\(b\)</span> and <span class="math inline">\(s_{b,KN}\)</span> is the subset whose eligibility is known. The adjusted weight becomes <span class="math inline">\(d_{1i} = a_{1b} \cdot d_{0i}\)</span> for cases in <span class="math inline">\(s_{b,KN}\)</span> and zero for unknowns. Adjustment classes could be formed from tract-level Census demographics (e.g., vacancy rates, housing type).</p></li>
+</ul>
+</section>
+<section id="non-response-adjustment-vdk-ch.-13-sec.-5.2-lecture-slides-4549" class="level2">
+<h2 class="anchored" data-anchor-id="non-response-adjustment-vdk-ch.-13-sec.-5.2-lecture-slides-4549">Non-response adjustment (VDK Ch. 13, Sec. 5.2; Lecture Slides 45–49)</h2>
+<ul>
+<li><p>Among cases known to be eligible, some will decline to participate. The weighting class NR adjustment within class <span class="math inline">\(c\)</span> is (Lecture Slide 48): <span class="math display">\[a_{2c} = \frac{\sum_{i \in s_{c,E}} d_{1i}}{\sum_{i \in s_{c,ER}} d_{1i}}\]</span> where <span class="math inline">\(s_{c,E}\)</span> is the set of all eligible cases and <span class="math inline">\(s_{c,ER}\)</span> is the subset of eligible respondents in class <span class="math inline">\(c\)</span>.</p></li>
+<li><p>A natural choice for adjustment classes is the four age domains, since response rates are expected to vary substantially (0.35 for ages 18–34 vs.&nbsp;0.65 for 65+). If the response probability is approximately constant within each domain, this simplifies to <span class="math inline">\(a_{2c} \approx 1/r_d\)</span> (Lecture Slide 50).</p></li>
+</ul>
+<div style="page-break-after: always;"></div>
+</section>
+</section>
+<section id="sec-variance" class="level1">
+<h1>Variance Estimation (Lecture Ch. 9; VDK Ch. 15)</h1>
+<section id="overview-for-managers-1" class="level2">
+<h2 class="anchored" data-anchor-id="overview-for-managers-1">Overview for managers</h2>
+<p>Because the sample is selected in stages (tracts, then block groups), standard formulas that assume simple random sampling would underestimate the uncertainty of survey estimates. Special variance estimation methods are needed that account for the clustering of persons within tracts. We describe two approaches: Taylor series linearization (our primary recommendation) and jackknife repeated replication (an alternative).</p>
+</section>
+<section id="taylor-series-linearization-primary-method" class="level2">
+<h2 class="anchored" data-anchor-id="taylor-series-linearization-primary-method">Taylor series linearization (primary method)</h2>
+<ul>
+<li><p>For systematic PPS selection, exact joint selection probabilities are not available. The standard practice (VDK Sec. 3.3) is to form <strong>paired analytic strata</strong> by grouping adjacent sample PSUs in the FIPS-sorted selection order. With <span class="math inline">\(m = 40\)</span> sample PSUs, this creates 20 strata, each containing 2 PSUs.</p></li>
+<li><p>Within this framework, <code>survey::svydesign()</code> uses the ultimate cluster variance estimator (Lecture Ch. 9 Slide 65) to estimate standard errors via Taylor series linearization. This treats each PSU as a “cluster” and captures all within-PSU variability — from both the SSU and person stages — through the between-PSU variation.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pair adjacent sample PSUs into analytic strata</span></span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>psu_sample_ve <span class="ot">&lt;-</span> psu_sample <span class="sc">|&gt;</span></span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Tract) <span class="sc">|&gt;</span></span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">psu_order =</span> <span class="fu">row_number</span>(),</span>
+<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">analytic_stratum =</span> <span class="fu">ceiling</span>(psu_order <span class="sc">/</span> <span class="dv">2</span>))</span>
+<span id="cb71-6"><a href="#cb71-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-7"><a href="#cb71-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"analytic strata:"</span>, <span class="fu">max</span>(psu_sample_ve<span class="sc">$</span>analytic_stratum), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>analytic strata: 20 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>psu_sample_ve <span class="sc">|&gt;</span> <span class="fu">count</span>(analytic_stratum) <span class="sc">|&gt;</span> <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">analytic_stratum</th>
+<th style="text-align: right;">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">19</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">2</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<ul>
+<li>The analyst would set up the survey design object as follows after data collection. The <code>id</code> identifies PSUs (tracts), <code>strata</code> identifies the paired analytic strata, and <code>weights</code> are the final NR-adjusted weights. The <code>nest = TRUE</code> argument tells <code>svydesign</code> that PSU IDs restart within each stratum.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="co"># after data collection, set up the tsl design:</span></span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>detroit_design <span class="ot">&lt;-</span> <span class="fu">svydesign</span>(</span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">id      =</span> <span class="sc">~</span> psu_id,</span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">strata  =</span> <span class="sc">~</span> analytic_stratum,</span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">weights =</span> <span class="sc">~</span> final_weight,</span>
+<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">data    =</span> survey_data,</span>
+<span id="cb74-7"><a href="#cb74-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">nest    =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb74-8"><a href="#cb74-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-9"><a href="#cb74-9" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate proportion using public transit as main transport</span></span>
+<span id="cb74-10"><a href="#cb74-10" aria-hidden="true" tabindex="-1"></a><span class="fu">svymean</span>(<span class="sc">~</span> <span class="fu">I</span>(transit <span class="sc">==</span> <span class="st">"public"</span>), <span class="at">design =</span> detroit_design)</span>
+<span id="cb74-11"><a href="#cb74-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-12"><a href="#cb74-12" aria-hidden="true" tabindex="-1"></a><span class="co"># domain estimates by age group</span></span>
+<span id="cb74-13"><a href="#cb74-13" aria-hidden="true" tabindex="-1"></a><span class="fu">svyby</span>(<span class="sc">~</span> <span class="fu">I</span>(transit <span class="sc">==</span> <span class="st">"public"</span>), <span class="sc">~</span> age_domain,</span>
+<span id="cb74-14"><a href="#cb74-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">design =</span> detroit_design, svymean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="jackknife-repeated-replication-alternative-method" class="level2">
+<h2 class="anchored" data-anchor-id="jackknife-repeated-replication-alternative-method">Jackknife repeated replication (alternative method)</h2>
+<ul>
+<li>As an alternative to linearization, <strong>delete-one-PSU jackknife (JKn)</strong> can be used (VDK Ch. 15). This method systematically drops one PSU at a time, re-estimates the statistic from each reduced sample, and computes the variance from the spread of these <span class="math inline">\(m = 40\)</span> replicate estimates. JKn is especially useful for nonlinear estimators (e.g., ratios, quantiles) where the Taylor approximation may be less accurate.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="co"># convert the tsl design to jackknife replicate weights</span></span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>detroit_jk <span class="ot">&lt;-</span> <span class="fu">as.svrepdesign</span>(</span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">design =</span> detroit_design,</span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">type   =</span> <span class="st">"JKn"</span>)</span>
+<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a><span class="co"># same estimators, variance computed via 40 replicates</span></span>
+<span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a><span class="fu">svymean</span>(<span class="sc">~</span> <span class="fu">I</span>(transit <span class="sc">==</span> <span class="st">"public"</span>), <span class="at">design =</span> detroit_jk)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+</section>
+<section id="sec-maps" class="level1">
+<h1>Maps (Assignment 7)</h1>
+<ul>
+<li>We produce maps of the Detroit sampling frame and the selected sample. The <code>ggmap</code> versions use Stadia Maps basemap tiles (matching the Assignment 7 style) to provide geographic context — roads, water features, and neighborhood boundaries are visible beneath the choropleth layers. The <code>geom_sf</code> fallback versions render without an API key.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tigris kables download progress that ignores quarto's</span></span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a><span class="co"># message/warning suppression, so we capture it manually</span></span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">capture.output</span>(<span class="fu">suppressMessages</span>({</span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>  detroit_tracts_sf <span class="ot">&lt;-</span> <span class="fu">tracts</span>(<span class="at">state =</span> <span class="st">"MI"</span>, <span class="at">county =</span> <span class="st">"Wayne"</span>, <span class="at">year =</span> <span class="dv">2020</span>) <span class="sc">|&gt;</span></span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">right_join</span>(tract_fips, <span class="at">by =</span> <span class="st">"GEOID"</span>) <span class="sc">|&gt;</span> <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">4326</span>)</span>
+<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>  detroit_bgs_sf <span class="ot">&lt;-</span> <span class="fu">block_groups</span>(<span class="at">state =</span> <span class="st">"MI"</span>, <span class="at">county =</span> <span class="st">"Wayne"</span>, <span class="at">year =</span> <span class="dv">2020</span>) <span class="sc">|&gt;</span></span>
+<span id="cb76-8"><a href="#cb76-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">GEOIDt =</span> <span class="fu">str_sub</span>(GEOID, <span class="dv">1</span>, <span class="dv">11</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb76-9"><a href="#cb76-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">right_join</span>(tract_fips, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"GEOIDt"</span> <span class="ot">=</span> <span class="st">"GEOID"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb76-10"><a href="#cb76-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">-</span>GEOIDt) <span class="sc">|&gt;</span> <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">4326</span>)</span>
+<span id="cb76-11"><a href="#cb76-11" aria-hidden="true" tabindex="-1"></a>})))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="co"># detroit bounding box for stadia tiles</span></span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>detroit_bbox <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">left =</span> <span class="sc">-</span><span class="fl">83.29</span>, <span class="at">bottom =</span> <span class="fl">42.25</span>, <span class="at">right =</span> <span class="sc">-</span><span class="fl">82.91</span>, <span class="at">top =</span> <span class="fl">42.45</span>)</span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>detroit_basemap <span class="ot">&lt;-</span> <span class="fu">get_stadiamap</span>(<span class="at">bbox =</span> detroit_bbox, <span class="at">zoom =</span> <span class="dv">12</span>,</span>
+<span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">maptype =</span> <span class="st">"stamen_toner_lite"</span>)</span>
+<span id="cb77-5"><a href="#cb77-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb77-6"><a href="#cb77-6" aria-hidden="true" tabindex="-1"></a><span class="co"># shared theme matching assignment 7</span></span>
+<span id="cb77-7"><a href="#cb77-7" aria-hidden="true" tabindex="-1"></a>map_theme <span class="ot">&lt;-</span> <span class="fu">theme_void</span>() <span class="sc">+</span></span>
+<span id="cb77-8"><a href="#cb77-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">13</span>, <span class="at">hjust =</span> .<span class="dv">5</span>),</span>
+<span id="cb77-9"><a href="#cb77-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">9</span>, <span class="at">hjust =</span> .<span class="dv">5</span>, <span class="at">color =</span> <span class="st">"gray40"</span>),</span>
+<span id="cb77-10"><a href="#cb77-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">9</span>),</span>
+<span id="cb77-11"><a href="#cb77-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">8</span>),</span>
+<span id="cb77-12"><a href="#cb77-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.key.height =</span> <span class="fu">unit</span>(.<span class="dv">8</span>, <span class="st">"cm"</span>),</span>
+<span id="cb77-13"><a href="#cb77-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.key.width =</span> <span class="fu">unit</span>(.<span class="dv">4</span>, <span class="st">"cm"</span>),</span>
+<span id="cb77-14"><a href="#cb77-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.margin =</span> <span class="fu">margin</span>(<span class="sc">-</span><span class="dv">5</span>, <span class="dv">4</span>, <span class="sc">-</span><span class="dv">5</span>, <span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ggmap: all tracts and block groups on basemap</span></span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggmap</span>(detroit_basemap) <span class="sc">+</span></span>
+<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> detroit_bgs_sf, <span class="at">fill =</span> <span class="cn">NA</span>,</span>
+<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">linewidth =</span> <span class="fl">0.2</span>, <span class="at">color =</span> <span class="st">"grey50"</span>,</span>
+<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb78-6"><a href="#cb78-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> detroit_tracts_sf, <span class="at">fill =</span> <span class="cn">NA</span>,</span>
+<span id="cb78-7"><a href="#cb78-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">linewidth =</span> <span class="fl">0.3</span>, <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb78-8"><a href="#cb78-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"City of Detroit"</span>,</span>
+<span id="cb78-9"><a href="#cb78-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Census Tracts (solid) and Block Groups (dotted)"</span>) <span class="sc">+</span></span>
+<span id="cb78-10"><a href="#cb78-10" aria-hidden="true" tabindex="-1"></a>  map_theme</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-ggmap-base" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ggmap-base-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="detroit_sampling_code_files/figure-html/fig-ggmap-base-1.png" id="fig-ggmap-base" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-ggmap-base-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ggmap: selected tracts (blue fill) and selected BGs (red outline)</span></span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggmap</span>(detroit_basemap) <span class="sc">+</span></span>
+<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> detroit_tracts_sf, <span class="at">fill =</span> <span class="cn">NA</span>,</span>
+<span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">color =</span> <span class="st">"grey70"</span>, <span class="at">linewidth =</span> <span class="fl">0.2</span>, <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb79-5"><a href="#cb79-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> detroit_tracts_sf <span class="sc">|&gt;</span> <span class="fu">filter</span>(GEOID <span class="sc">%in%</span> psu_sample<span class="sc">$</span>Tract),</span>
+<span id="cb79-6"><a href="#cb79-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">fill =</span> <span class="fu">viridis</span>(<span class="dv">1</span>, <span class="at">begin =</span> <span class="fl">0.4</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>),</span>
+<span id="cb79-7"><a href="#cb79-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">color =</span> <span class="fu">viridis</span>(<span class="dv">1</span>, <span class="at">begin =</span> <span class="fl">0.4</span>), <span class="at">linewidth =</span> <span class="fl">0.5</span>,</span>
+<span id="cb79-8"><a href="#cb79-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb79-9"><a href="#cb79-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> detroit_bgs_sf <span class="sc">|&gt;</span> <span class="fu">filter</span>(GEOID <span class="sc">%in%</span> sample_bgs<span class="sc">$</span>BlockGroup),</span>
+<span id="cb79-10"><a href="#cb79-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">fill =</span> <span class="cn">NA</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>, <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb79-11"><a href="#cb79-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Selected Sample: 40 Tracts and Block Groups"</span>,</span>
+<span id="cb79-12"><a href="#cb79-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Blue fill = sample tracts; Red outline = selected BGs"</span>) <span class="sc">+</span></span>
+<span id="cb79-13"><a href="#cb79-13" aria-hidden="true" tabindex="-1"></a>  map_theme</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-ggmap-sample" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ggmap-sample-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="detroit_sampling_code_files/figure-html/fig-ggmap-sample-1.png" id="fig-ggmap-sample" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-ggmap-sample-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="fallback-maps-no-api-key-required" class="level3">
+<h3 class="anchored" data-anchor-id="fallback-maps-no-api-key-required">Fallback maps (no API key required)</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> detroit_bgs_sf, <span class="at">fill =</span> <span class="cn">NA</span>,</span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">linewidth =</span> <span class="fl">0.2</span>, <span class="at">color =</span> <span class="st">"grey50"</span>) <span class="sc">+</span></span>
+<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> detroit_tracts_sf, <span class="at">fill =</span> <span class="cn">NA</span>,</span>
+<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">linewidth =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb80-6"><a href="#cb80-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"City of Detroit"</span>,</span>
+<span id="cb80-7"><a href="#cb80-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Tracts (solid) and Block Groups (dotted)"</span>) <span class="sc">+</span></span>
+<span id="cb80-8"><a href="#cb80-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>(<span class="at">base_size =</span> <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-fallback-base" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fallback-base-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="detroit_sampling_code_files/figure-html/fig-fallback-base-1.png" id="fig-fallback-base" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-fallback-base-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> detroit_tracts_sf, <span class="at">fill =</span> <span class="cn">NA</span>,</span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">color =</span> <span class="st">"grey70"</span>, <span class="at">linewidth =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
+<span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> detroit_tracts_sf <span class="sc">|&gt;</span> <span class="fu">filter</span>(GEOID <span class="sc">%in%</span> psu_sample<span class="sc">$</span>Tract),</span>
+<span id="cb81-5"><a href="#cb81-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">fill =</span> <span class="fu">viridis</span>(<span class="dv">1</span>, <span class="at">begin =</span> <span class="fl">0.4</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>),</span>
+<span id="cb81-6"><a href="#cb81-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">color =</span> <span class="fu">viridis</span>(<span class="dv">1</span>, <span class="at">begin =</span> <span class="fl">0.4</span>), <span class="at">linewidth =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb81-7"><a href="#cb81-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> detroit_bgs_sf <span class="sc">|&gt;</span> <span class="fu">filter</span>(GEOID <span class="sc">%in%</span> sample_bgs<span class="sc">$</span>BlockGroup),</span>
+<span id="cb81-8"><a href="#cb81-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">fill =</span> <span class="cn">NA</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb81-9"><a href="#cb81-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Selected Sample: 40 Tracts and Block Groups"</span>,</span>
+<span id="cb81-10"><a href="#cb81-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Blue = sample tracts; Red = selected BGs"</span>) <span class="sc">+</span></span>
+<span id="cb81-11"><a href="#cb81-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>(<span class="at">base_size =</span> <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-fallback-sample" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fallback-sample-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="detroit_sampling_code_files/figure-html/fig-fallback-sample-1.png" id="fig-fallback-sample" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-fallback-sample-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+</section>
+<section id="sec-appendix" class="level1">
+<h1>Appendix</h1>
+<section id="a.-sample-psu-and-ssu-listing" class="level2">
+<h2 class="anchored" data-anchor-id="a.-sample-psu-and-ssu-listing">A. Sample PSU and SSU listing</h2>
+<ul>
+<li>The table below lists all 40 selected BGs with their Census population data, composite MOS, selection probabilities at each stage (<span class="math inline">\(\pi_i\)</span> and <span class="math inline">\(\pi_{j|i}\)</span>), the joint BG probability (<span class="math inline">\(\pi_{ij}\)</span>), and the domain-specific person sampling rates that field teams would implement. The rates are listed in the <code>rate_</code> columns.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>sample_listing <span class="ot">&lt;-</span> sample_bgs <span class="sc">|&gt;</span></span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Tract, BlockGroup, TotAdult, <span class="fu">starts_with</span>(<span class="st">"Age"</span>),</span>
+<span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a>         MOS_bg, pi_i, pij_given_i, pi_ij,</span>
+<span id="cb82-4"><a href="#cb82-4" aria-hidden="true" tabindex="-1"></a>         <span class="fu">starts_with</span>(<span class="st">"rate_"</span>), <span class="fu">starts_with</span>(<span class="st">"d0_"</span>), exp_workload) <span class="sc">|&gt;</span></span>
+<span id="cb82-5"><a href="#cb82-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Tract)</span>
+<span id="cb82-6"><a href="#cb82-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb82-7"><a href="#cb82-7" aria-hidden="true" tabindex="-1"></a><span class="co"># table 1: census data and selection probabilities</span></span>
+<span id="cb82-8"><a href="#cb82-8" aria-hidden="true" tabindex="-1"></a>sample_listing <span class="sc">|&gt;</span></span>
+<span id="cb82-9"><a href="#cb82-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Tract, BlockGroup, TotAdult, MOS_bg, pi_i, pij_given_i, pi_ij) <span class="sc">|&gt;</span></span>
+<span id="cb82-10"><a href="#cb82-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb82-11"><a href="#cb82-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">booktabs =</span> <span class="cn">TRUE</span>, <span class="at">format =</span> <span class="st">"latex"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+</div>
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="co"># table 2: person-level domain rates and workload</span></span>
+<span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a>sample_listing <span class="sc">|&gt;</span></span>
+<span id="cb83-3"><a href="#cb83-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Tract, BlockGroup, <span class="fu">starts_with</span>(<span class="st">"rate_"</span>), exp_workload) <span class="sc">|&gt;</span></span>
+<span id="cb83-4"><a href="#cb83-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb83-5"><a href="#cb83-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># shorten fips to last 6 digits for display</span></span>
+<span id="cb83-6"><a href="#cb83-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Tract =</span> <span class="fu">str_sub</span>(Tract, <span class="sc">-</span><span class="dv">6</span>),</span>
+<span id="cb83-7"><a href="#cb83-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">BlockGroup =</span> <span class="fu">str_sub</span>(BlockGroup, <span class="sc">-</span><span class="dv">7</span>),</span>
+<span id="cb83-8"><a href="#cb83-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>))</span>
+<span id="cb83-9"><a href="#cb83-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb83-10"><a href="#cb83-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">booktabs =</span> <span class="cn">TRUE</span>, <span class="at">format =</span> <span class="st">"latex"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb83-11"><a href="#cb83-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">latex_options =</span> <span class="fu">c</span>(<span class="st">"scale_down"</span>, <span class="st">"hold_position"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+</div>
+</div>
+</section>
+<section id="b.-export-files" class="level2">
+<h2 class="anchored" data-anchor-id="b.-export-files">B. Export files</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(psu_frame, <span class="fu">here</span>(<span class="st">"outputs"</span>, <span class="st">"FRAME_PSU_EffectSize.csv"</span>))</span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(ssu_frame, <span class="fu">here</span>(<span class="st">"outputs"</span>, <span class="st">"FRAME_BG_EffectSize.csv"</span>))</span>
+<span id="cb84-3"><a href="#cb84-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(sample_listing, <span class="fu">here</span>(<span class="st">"outputs"</span>, <span class="st">"SAMPLE_EffectSize.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="c.-ai-disclosure" class="level2">
+<h2 class="anchored" data-anchor-id="c.-ai-disclosure">C. AI Disclosure</h2>
+<p>This project utilized Claude (Anthropic, Opus 4.6) as an AI coding assistant. The tool was used to debug R code throughout development, including diagnosing vector recycling issues with <code>across()</code> when multiplying domain columns by the <code>f_d</code> vector, resolving <code>rename()</code> conflicts caused by duplicate column names after the PSU linking step, and troubleshooting <code>kable()</code> and <code>kableExtra</code> table formatting for PDF output such as fitting wide tables using <code>scale_down</code> and splitting listings into separate display tables. Claude also assisted with map rendering — suppressing verbose <code>tigris</code> download output during Quarto rendering and configuring <code>ggmap</code> basemap layers with <code>inherit.aes = FALSE</code> for proper <code>geom_sf</code> overlay alignment. All AI outputs were reviewed, tested, and modified by team members before inclusion.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Effect Size">
+<meta name="dcterms.date" content="2026-05-04">
+
+<title>Detroit Transportation Survey: Cheat Sheet</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="detroit_cheatsheet_files/libs/clipboard/clipboard.min.js"></script>
+<script src="detroit_cheatsheet_files/libs/quarto-html/quarto.js"></script>
+<script src="detroit_cheatsheet_files/libs/quarto-html/popper.min.js"></script>
+<script src="detroit_cheatsheet_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="detroit_cheatsheet_files/libs/quarto-html/anchor.min.js"></script>
+<link href="detroit_cheatsheet_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="detroit_cheatsheet_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="detroit_cheatsheet_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="detroit_cheatsheet_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="detroit_cheatsheet_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Detroit Transportation Survey: Cheat Sheet</h1>
+<p class="subtitle lead">SURV745 Project Quick Reference</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Effect Size </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">May 4, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="what-we-did" class="level1">
+<h1>What We Did</h1>
+<p>We designed a two-stage area probability sample for a face-to-face transportation survey of Detroit adults (18+). The sample selects 40 census tracts (PSUs) and 1 block group per tract (SSUs) using systematic PPS with a composite measure of size. We do not select persons directly because no address list exists; instead we describe how field teams would list households in each selected block group, sample households, and select one adult per household using a Kish grid or next-birthday method. Selecting one person per household is important because the outcome variables (vehicle ownership, transit use, skipping trips, asking for rides) are household-correlated, so selecting two people from the same household would inflate the design effect.</p>
+</section>
+<section id="what-we-found" class="level1">
+<h1>What We Found</h1>
+<p>The frame starts from the Tract and BlockGroup sheets of the provided Detroit_MI.xlsx file, which contain tract- and BG-level counts from the 2020 DHC. After restricting to the 280 Detroit FIPS codes, the raw frame has 276 unique tracts and 627 block groups. Tract 9855 (26163985500) appears identically 25 times with zero population in every column, likely a water body or uninhabited industrial zone, and we drop it at ingestion. In the QC step we drop 5 additional tracts with zero adult population and 9 zero-adult block groups within otherwise populated tracts, leaving 270 tracts and 612 block groups. Five additional tracts are so small (1 to 71 adults) that all their block groups fail the feasibility check; we link them with geographic neighbors following Kish (1965), reducing the frame to 265 PSUs absorbed into 3 receiving tracts. Another 6 block groups within otherwise large tracts also fail feasibility, but their near-zero MOS means they are extremely unlikely to be selected by PPS; we note them and would apply Kish linking in the field if needed. The final frame covers 480,131 adults across approximately 309,916 households.</p>
+<p>The composite MOS technique (VDK Eq. 10.1) assigns each tract a size measure that accounts for all four age domains and their different sampling rates. This produces self-weighting samples within each domain and equal workload across all 40 sample tracts. We verified this by replicating the VDK Example 10.1 spreadsheet checks: all within-PSU rates are below 1 (feasibility passes), every PSU has the same expected workload of approximately 53.9 persons, and the product <span class="math inline">\(\pi_i \cdot \pi_{j|i} \cdot \pi_{k|ij}(d) = f_d\)</span> holds for every PSU and domain (self-weighting confirmed). A uniform sampling rate would not work because differential response rates (0.35 to 0.65) cause some domains to miss their 250-respondent target by up to 8.5%.</p>
+</section>
+<section id="equation-reference" class="level1">
+<h1>Equation Reference</h1>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Symbol</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Formula</th>
+<th style="text-align: left;">What it means</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(f_d\)</span></td>
+<td style="text-align: left;">Domain sampling rate</td>
+<td style="text-align: left;"><span class="math inline">\(f_d = \dfrac{n_d^{\text{select}}}{N_d} = \dfrac{250/r_d}{N_d}\)</span></td>
+<td style="text-align: left;">The fraction of persons in domain <span class="math inline">\(d\)</span> that we aim to select. Different for each age group because response rates differ. This is the target overall selection probability for every person in domain <span class="math inline">\(d\)</span>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(S_i\)</span></td>
+<td style="text-align: left;">Composite MOS for PSU <span class="math inline">\(i\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(S_i = \displaystyle\sum_{d=1}^{4} f_d \cdot N_i(d)\)</span></td>
+<td style="text-align: left;">The expected number of selections from tract <span class="math inline">\(i\)</span> if domain rates were applied to its populations. Larger tracts with more people in hard-to-reach domains get higher MOS. (VDK Eq. 10.1, p.&nbsp;282)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(S\)</span></td>
+<td style="text-align: left;">Total MOS</td>
+<td style="text-align: left;"><span class="math inline">\(S = \displaystyle\sum_{i} S_i = \sum_d f_d N_d\)</span></td>
+<td style="text-align: left;">Equals the total number of selections across all domains (<span class="math inline">\(\approx 2{,}155\)</span>). Also equals <span class="math inline">\(m \cdot \bar{n} \cdot \bar{q}\)</span>. (VDK p.&nbsp;286)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\pi_i\)</span></td>
+<td style="text-align: left;">PSU selection probability</td>
+<td style="text-align: left;"><span class="math inline">\(\pi_i = \dfrac{m \cdot S_i}{S}\)</span></td>
+<td style="text-align: left;">Probability that tract <span class="math inline">\(i\)</span> is selected into the sample. Proportional to its composite MOS. Must be <span class="math inline">\(\leq 1\)</span>. (VDK p.&nbsp;282)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(S_{ij}\)</span></td>
+<td style="text-align: left;">Composite MOS for BG <span class="math inline">\(j\)</span> in tract <span class="math inline">\(i\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(S_{ij} = \displaystyle\sum_d f_d \cdot Q_{ij}(d)\)</span></td>
+<td style="text-align: left;">Same idea as <span class="math inline">\(S_i\)</span> but at the block group level, where <span class="math inline">\(Q_{ij}(d)\)</span> is the domain <span class="math inline">\(d\)</span> population in BG <span class="math inline">\(ij\)</span>. (VDK p.&nbsp;286)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\pi_{j|i}\)</span></td>
+<td style="text-align: left;">Conditional BG selection probability</td>
+<td style="text-align: left;"><span class="math inline">\(\pi_{j|i} = \dfrac{\bar{n} \cdot S_{ij}}{S_i} = \dfrac{S_{ij}}{S_i}\)</span></td>
+<td style="text-align: left;">Probability of selecting BG <span class="math inline">\(j\)</span> given that tract <span class="math inline">\(i\)</span> was selected. Since <span class="math inline">\(\bar{n}=1\)</span>, this is just the BG’s share of the tract’s MOS. (VDK p.&nbsp;286)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\pi_{ij}\)</span></td>
+<td style="text-align: left;">Joint BG probability</td>
+<td style="text-align: left;"><span class="math inline">\(\pi_{ij} = \pi_i \cdot \pi_{j|i}\)</span></td>
+<td style="text-align: left;">What the two-stage selection actually produces. This is the probability that BG <span class="math inline">\(ij\)</span> ends up in the sample. (VDK p.&nbsp;286)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\bar{q}\)</span></td>
+<td style="text-align: left;">Workload per BG</td>
+<td style="text-align: left;"><span class="math inline">\(\bar{q} = \dfrac{S}{m \cdot \bar{n}} \approx 53.9\)</span></td>
+<td style="text-align: left;">Expected number of persons to contact in each selected BG. Same in every BG; this is the equal workload property.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\pi_{k|ij}(d)\)</span></td>
+<td style="text-align: left;">Within-BG person rate</td>
+<td style="text-align: left;"><span class="math inline">\(\pi_{k|ij}(d) = \dfrac{\bar{q} \cdot f_d}{S_{ij}}\)</span></td>
+<td style="text-align: left;">Rate at which field teams sample persons in domain <span class="math inline">\(d\)</span> within BG <span class="math inline">\(ij\)</span>. Varies by BG and domain. Must be <span class="math inline">\(\leq 1\)</span> (feasibility). (VDK p.&nbsp;287)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(n^*_i(d)\)</span></td>
+<td style="text-align: left;">Expected domain sample in PSU <span class="math inline">\(i\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(n^*_i(d) = \bar{q} \cdot f_d \cdot \dfrac{N_i(d)}{S_i}\)</span></td>
+<td style="text-align: left;">How many persons from domain <span class="math inline">\(d\)</span> we expect to select in tract <span class="math inline">\(i\)</span>. Generally not an integer. (VDK Eq. 10.2, p.&nbsp;283)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Self-weighting</td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;"><span class="math inline">\(\pi_i \cdot \pi_{j|i} \cdot \pi_{k|ij}(d) = f_d\)</span></td>
+<td style="text-align: left;">The <span class="math inline">\(S_i\)</span> and <span class="math inline">\(S_{ij}\)</span> terms cancel. Every person in domain <span class="math inline">\(d\)</span> has the same overall probability <span class="math inline">\(f_d\)</span>, regardless of which tract or BG they live in. (VDK p.&nbsp;286)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(d_{0}\)</span></td>
+<td style="text-align: left;">Base weight</td>
+<td style="text-align: left;"><span class="math inline">\(d_0(d) = 1/f_d\)</span></td>
+<td style="text-align: left;">Inverse of the selection probability. Constant within each domain under self-weighting. (VDK Ch. 13)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(a_{1b}\)</span></td>
+<td style="text-align: left;">Unknown eligibility adj.</td>
+<td style="text-align: left;"><span class="math inline">\(a_{1b} = \dfrac{\sum_{s_b} d_{0i}}{\sum_{s_{b,KN}} d_{0i}}\)</span></td>
+<td style="text-align: left;">Redistributes weight of cases with unknown eligibility to those with known status. (Lecture Ch. 13, Slide 30)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(a_{2c}\)</span></td>
+<td style="text-align: left;">NR adjustment</td>
+<td style="text-align: left;"><span class="math inline">\(a_{2c} = \dfrac{\sum_{s_{c,E}} d_{1i}}{\sum_{s_{c,ER}} d_{1i}}\)</span></td>
+<td style="text-align: left;">Inflates respondent weights to account for eligible non-respondents. With age-domain classes: <span class="math inline">\(\approx 1/r_d\)</span>. (Lecture Ch. 13, Slide 48)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">deff</td>
+<td style="text-align: left;">Design effect</td>
+<td style="text-align: left;"><span class="math inline">\(\text{deff} \approx 1 + (\bar{b}-1)\delta\)</span></td>
+<td style="text-align: left;">How much clustering inflates the variance compared to SRS. <span class="math inline">\(\bar{b} \approx 25\)</span> respondents/PSU, <span class="math inline">\(\delta\)</span> = intraclass correlation. (VDK Ch. 9, Eq. 9.5)</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="selected-sample-map" class="level1">
+<h1>Selected Sample Map</h1>
+<p>The map below shows the 40 selected tracts (blue fill) and the 40 selected block groups (red outline) overlaid on the Detroit city boundary. The systematic PPS selection with FIPS-sorted implicit stratification spreads the sample across the city geographically.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-cheatsheet-map" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-cheatsheet-map-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="detroit_cheatsheet_files/figure-html/fig-cheatsheet-map-1.png" id="fig-cheatsheet-map" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-cheatsheet-map-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
